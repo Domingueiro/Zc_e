@@ -108,7 +108,38 @@
         .badge.critico { background: #fce4ec; color: #c62828; }
         .badge.zero { background: #f3e5f5; color: #6a1b9a; }
 
-        /* MODAL ALERTAS REAIS */
+        .btn-sintese { background: var(--azul); color: white; border: none; padding: 8px 16px; font-family: 'Syne'; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; border-radius: 6px; transition: background .2s; width: 100%; }
+        .btn-sintese:hover { background: #1a4f80; }
+        .btn-sintese:disabled { background: var(--muted); cursor: not-allowed; }
+
+        /* MODAL SÍNTESE */
+        .modal-sintese-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 9999; display: none; align-items: flex-end; justify-content: center; }
+        .modal-sintese-overlay.open { display: flex; }
+        .modal-sintese { background: white; width: 100%; max-width: 600px; max-height: 88vh; overflow-y: auto; border-radius: 20px 20px 0 0; padding: 24px 20px 36px; animation: slideUp .3s ease; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .modal-sintese-handle { width: 40px; height: 4px; background: var(--cinza2); border-radius: 2px; margin: 0 auto 18px; }
+        .modal-sintese-titulo { font-family: 'Syne'; font-size: 16px; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
+        .modal-sintese-sub { font-family: 'DM Mono'; font-size: 11px; color: var(--muted); margin-bottom: 18px; }
+        .sintese-corpo { font-family: 'Barlow'; font-size: 13px; color: var(--accent); line-height: 1.7; margin-bottom: 20px; min-height: 80px; }
+        .sintese-loading { display: flex; align-items: center; gap: 10px; color: var(--muted); font-family: 'DM Mono'; font-size: 12px; }
+        .sintese-spinner { width: 18px; height: 18px; border: 2px solid var(--cinza2); border-top-color: var(--azul); border-radius: 50%; animation: spin .8s linear infinite; flex-shrink: 0; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .acoes-titulo { font-family: 'Syne'; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+        .acoes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+        .acao-btn { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px 14px; border: 1px solid var(--cinza2); background: white; border-radius: 10px; cursor: pointer; text-align: left; transition: all .2s; }
+        .acao-btn:hover { border-color: var(--azul); background: #f0f4ff; }
+        .acao-btn:disabled { opacity: .5; cursor: not-allowed; }
+        .acao-btn .acao-icon { font-size: 20px; }
+        .acao-btn .acao-label { font-family: 'Syne'; font-size: 11px; font-weight: 700; color: var(--accent); }
+        .acao-btn .acao-desc { font-family: 'DM Mono'; font-size: 10px; color: var(--muted); line-height: 1.4; }
+        .acao-resultado { background: #f5f2ec; border: 1px solid var(--cinza2); border-radius: 10px; padding: 14px; font-family: 'Barlow'; font-size: 12px; color: var(--accent); line-height: 1.7; margin-bottom: 12px; display: none; white-space: pre-wrap; }
+        .acao-resultado.visible { display: block; }
+        .btn-copiar { background: var(--azul); color: white; border: none; padding: 8px 18px; font-family: 'Syne'; font-size: 11px; font-weight: 700; cursor: pointer; border-radius: 6px; display: none; }
+        .btn-copiar.visible { display: inline-block; }
+        .validacao-aviso { display:none; margin-top:12px; background:#f0f7ff; border:1px solid #b3d4f5; border-left:3px solid #1a6fc4; border-radius:8px; padding:12px 14px; font-family:'DM Mono'; font-size:11px; color:#1a3a5c; line-height:1.6; }
+        .validacao-aviso.visible { display:block; }
+        .validacao-aviso strong { color:#1a6fc4; }
+        .validacao-aviso a { color:#1a6fc4; text-decoration:underline; }
         .modal-overlay-local { position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 9998; display: none; align-items: center; justify-content: center; padding: 16px; }
         .modal-overlay-local.open { display: flex; }
         .modal-local { background: white; border-radius: 12px; max-width: 620px; width: 100%; max-height: 85vh; overflow-y: auto; border-top: 4px solid var(--vermelho); animation: fadeIn .25s ease; }
@@ -173,43 +204,6 @@
         <div class="secao-titulo" style="color:var(--vermelho); border-color:var(--vermelho)">⚠ Alertas do seu perímetro</div>
         <div id="conteudo-alerta">
             <p style="font-family: 'DM Mono';">Nenhuma anomalia detectada ainda. Insira um CEP no radar.</p>
-        </div>
-
-        <div class="secao-titulo" style="color:var(--azul); border-color:var(--azul); margin-top:28px">📡 Casos reais · São Paulo</div>
-        <p style="font-family:'DM Mono'; font-size:11px; color:var(--muted); margin-bottom:14px;">Ocorrências documentadas com dados públicos auditáveis.</p>
-
-        <!-- Caso 1: Apagão Semafórico -->
-        <div class="alerta-real">
-            <div class="alerta-real-header">
-                <div class="alerta-real-cat">🚦 Infraestrutura Semafórica · Crítico</div>
-                <div class="alerta-real-id">#CET-001/2021</div>
-            </div>
-            <div class="alerta-real-titulo">Apagão Semafórico — Rede Viária SP · 2022</div>
-            <div class="alerta-real-desc">Semáforos apagados por furto de cabo de cobre. Nenhum alerta automático — ausência de telemetria. SLA contratual de 4h violado em 72h. TCM instaurou auditoria em 2023. Contrato não foi revisado para uso de alumínio antifurto.</div>
-            <div class="alerta-real-stats">
-                <div class="alerta-stat"><div class="alerta-stat-val" style="color:var(--vermelho)">72h</div><div class="alerta-stat-label">Sem manutenção</div></div>
-                <div class="alerta-stat"><div class="alerta-stat-val">4h</div><div class="alerta-stat-label">SLA contratual</div></div>
-                <div class="alerta-stat"><div class="alerta-stat-val" style="color:var(--vermelho)">1.240×</div><div class="alerta-stat-label">SLA violado</div></div>
-                <div class="alerta-stat"><div class="alerta-stat-val">R$284M</div><div class="alerta-stat-label">Contrato CET</div></div>
-            </div>
-            <button class="btn-ver-modal" onclick="abrirModalReal('cet001')">📄 VER DETALHES E TIMELINE</button>
-        </div>
-
-        <!-- Caso 2: Paradoxo LiDAR -->
-        <div class="alerta-real" style="border-left-color: #f57c00;">
-            <div class="alerta-real-header">
-                <div class="alerta-real-cat" style="color:#f57c00">🌳 Arborização Urbana · Lacuna de Execução</div>
-                <div class="alerta-real-id">#SVMA-089/2022</div>
-            </div>
-            <div class="alerta-real-titulo">Paradoxo LiDAR — 650 mil árvores mapeadas, poda não chegou</div>
-            <div class="alerta-real-desc">Inventário arbóreo com tecnologia LiDAR: 91% concluído, 650.000 árvores cadastradas. Orçamento de execução de poda cresceu só 8% enquanto árvores prioritárias identificadas cresceram 340%. Metas anuais atingidas em apenas 23%.</div>
-            <div class="alerta-real-stats">
-                <div class="alerta-stat"><div class="alerta-stat-val" style="color:#2e7d32">91%</div><div class="alerta-stat-label">Mapeado</div></div>
-                <div class="alerta-stat"><div class="alerta-stat-val" style="color:var(--vermelho)">23%</div><div class="alerta-stat-label">Podas exec.</div></div>
-                <div class="alerta-stat"><div class="alerta-stat-val">650K</div><div class="alerta-stat-label">Árvores</div></div>
-                <div class="alerta-stat"><div class="alerta-stat-val">R$2,1M</div><div class="alerta-stat-label">Contrato</div></div>
-            </div>
-            <button class="btn-ver-modal" onclick="abrirModalReal('svma089')">📄 VER DETALHES E TIMELINE</button>
         </div>
     </div>
 
@@ -284,6 +278,58 @@
         <iframe id="iframe-licitacoes" src="licitacoes.html"
             style="width:100%; height:calc(100vh - 120px); border:none; display:block;">
         </iframe>
+    </div>
+</div>
+
+<!-- MODAL SÍNTESE TÉCNICA + AÇÕES -->
+<div class="modal-sintese-overlay" id="modal-sintese" onclick="fecharSintese(event)">
+    <div class="modal-sintese">
+        <div class="modal-sintese-handle"></div>
+        <div class="modal-sintese-titulo" id="sintese-titulo">Síntese Técnica</div>
+        <div class="modal-sintese-sub" id="sintese-sub"></div>
+
+        <div class="sintese-corpo" id="sintese-corpo">
+            <div class="sintese-loading" id="sintese-loading" style="display:none">
+                <div class="sintese-spinner"></div>
+                <span>Gerando análise técnica…</span>
+            </div>
+            <div id="sintese-texto"></div>
+        </div>
+
+        <div class="acoes-titulo">O que você pode fazer agora</div>
+        <div class="acoes-grid">
+            <button class="acao-btn" id="acao-whats" onclick="gerarAcao('whatsapp')">
+                <span class="acao-icon">💬</span>
+                <span class="acao-label">Grupo WhatsApp</span>
+                <span class="acao-desc">Texto para mobilizar vizinhos</span>
+            </button>
+            <button class="acao-btn" id="acao-vereador" onclick="gerarAcao('vereador')">
+                <span class="acao-icon">🏛️</span>
+                <span class="acao-label">Acionar Vereador</span>
+                <span class="acao-desc">Mensagem com dados e cobrança</span>
+            </button>
+            <button class="acao-btn" id="acao-tcm" onclick="gerarAcao('tcm')">
+                <span class="acao-icon">⚖️</span>
+                <span class="acao-label">Representação TCM</span>
+                <span class="acao-desc">Texto com base legal</span>
+            </button>
+            <button class="acao-btn" id="acao-mp" onclick="gerarAcao('mp')">
+                <span class="acao-icon">🔏</span>
+                <span class="acao-label">Notícia ao MP</span>
+                <span class="acao-desc">Minuta com tipificação</span>
+            </button>
+        </div>
+
+        <div class="acao-resultado" id="acao-resultado"></div>
+        <button class="btn-copiar" id="btn-copiar" onclick="copiarAcao()">📋 Copiar texto</button>
+
+        <div class="validacao-aviso" id="validacao-aviso">
+            🔍 <strong>Antes de enviar, valide as informações.</strong><br>
+            O projeto <strong>"Tá Certo Isso Aí?"</strong> da USP (ICMC) verifica a veracidade de textos via WhatsApp usando IA. Envie o conteúdo copiado para o bot antes de distribuir — especialmente ao acionar autoridades.<br><br>
+            Saiba mais: <a href="https://www.icmc.usp.br" target="_blank" rel="noopener">icmc.usp.br</a>
+        </div>
+
+        <button class="btn-fechar-sintese" onclick="fecharSintese()">Fechar</button>
     </div>
 </div>
 
@@ -495,6 +541,11 @@
                 </div>
                 <div class="alerta-card-tipo"><b>TIPO:</b> ${a.tipo}</div>
                 <div class="alerta-card-nota">${a.local ? 'Irregularidade identificada diretamente no endereço do CEP informado.' : 'Discrepância detectada via cruzamento de dados urbanos. Ponto de fiscalização sugerido.'}</div>
+                <div style="margin-top:12px">
+                    <button class="btn-sintese" onclick="abrirSintese('${a.id}', '${a.tipo}', ${a.local})">
+                        🔍 SÍNTESE TÉCNICA + AÇÕES
+                    </button>
+                </div>
             </div>
         `).join('');
     }
@@ -502,6 +553,97 @@
     function buscarNominatim(query) {
         return fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
             .then(r => r.json());
+    }
+
+    // ── SÍNTESE TÉCNICA + AÇÕES ────────────────────────────────────────────
+    var sinteseAtual = { id: null, tipo: null, local: false, texto: '' };
+
+    const SINTESES_SIMULADAS = {
+        'Sinalização Crítica no Local': `Esta ocorrência indica uma irregularidade identificada diretamente no endereço consultado. Trata-se de uma situação que demanda fiscalização imediata pelo órgão municipal competente.\n\nA Lei Orgânica do Município de São Paulo (Art. 204) estabelece que o Poder Executivo é responsável pela manutenção de infraestrutura urbana em condições seguras e funcionais. O descumprimento configura omissão administrativa passível de responsabilização.\n\nO impacto direto ao cidadão inclui risco à segurança, comprometimento da mobilidade e redução da qualidade de vida no entorno imediato. Em casos de dano, o Município pode ser responsabilizado civilmente.\n\nA irregularidade se caracteriza pela ausência de manutenção preventiva dentro dos prazos contratuais vigentes, evidenciando falha de fiscalização contratual pela Administração Pública.\n\nA urgência é ALTA: cada dia sem intervenção amplia o risco e o passivo do Município perante os munícipes afetados.`,
+
+        'Irregularidade em Licitação': `Foi detectada uma discrepância em processo licitatório municipal que pode indicar sobrepreço, direcionamento ou descumprimento contratual. A situação requer verificação formal junto ao órgão contratante.\n\nA Lei Federal 14.133/2021 (Nova Lei de Licitações) e a Lei Orgânica Municipal estabelecem requisitos de transparência, economicidade e eficiência nos contratos públicos. Desvios configuram infração administrativa e, em casos graves, ato de improbidade.\n\nO cidadão é diretamente lesado pelo desvio de recursos públicos que poderiam ser aplicados em serviços essenciais como saúde, educação e infraestrutura urbana.\n\nA irregularidade se enquadra potencialmente nos artigos 10 e 11 da Lei de Improbidade Administrativa (Lei 8.429/1992), que tratam de atos que causam prejuízo ao erário e atentam contra princípios da administração pública.\n\nA urgência é MÉDIA-ALTA: o processo pode estar em andamento, tornando fundamental a intervenção tempestiva para evitar consumação do dano.`,
+
+        'Atraso Crítico em Obra': `A obra identificada encontra-se em situação de atraso crítico, sem justificativa técnica registrada nos sistemas de acompanhamento da Prefeitura de São Paulo. Trata-se de descumprimento contratual com impacto direto na comunidade.\n\nO Decreto Municipal 57.086/2016 e as cláusulas contratuais padrão da PMSP estabelecem cronogramas obrigatórios e penalidades por atraso injustificado. O contratado está sujeito a multas e rescisão contratual por inexecução.\n\nA população local sofre os efeitos concretos: vias interditadas, risco de acidentes, acessibilidade comprometida e perda de qualidade de vida. Obras paralisadas também representam desperdício de recursos públicos já desembolsados.\n\nO atraso sem justificativa formal caracteriza inexecução parcial do contrato (Art. 137 da Lei 14.133/2021), sujeitando a contratada a sanções administrativas e a Administração à responsabilidade por omissão na fiscalização.\n\nA urgência é ALTA: quanto mais tempo a obra permanece paralisada, maiores os custos de remobilização, deterioração do material e dano ao erário público.`,
+
+        'Discrepância Orçamentária': `Foi identificada uma discrepância entre os valores orçados e os efetivamente executados em contrato municipal, o que pode indicar superfaturamento, desvio de finalidade ou falha grave de planejamento orçamentário.\n\nA Lei de Responsabilidade Fiscal (LC 101/2000) e a Lei Orgânica Municipal exigem que gastos públicos sejam realizados com eficiência, eficácia e transparência. Desvios entre planejado e executado devem ser formalmente justificados e auditados.\n\nO prejuízo ao cidadão é duplo: além da perda financeira direta ao erário, os recursos desviados ou mal aplicados deixam de financiar serviços públicos essenciais na região afetada.\n\nA discrepância pode configurar irregularidade passível de análise pelo TCM-SP, especialmente se houver indícios de superfaturamento (preços acima do mercado) ou desvio de finalidade (verba aplicada em objeto diferente do contratado).\n\nA urgência é MÉDIA: recomenda-se protocolo formal de questionamento junto ao órgão responsável e representação ao TCM para abertura de procedimento de auditoria.`
+    };
+
+    const ACOES_SIMULADAS = {
+        whatsapp: (tipo) => `⚠️ *ALERTA CÍVICO — ${tipo.toUpperCase()}*\n\nVizinhos, identificamos uma irregularidade no nosso bairro que precisa da nossa atenção coletiva.\n\nO problema foi documentado com dados públicos e representa descumprimento de obrigações municipais que afetam diretamente a nossa qualidade de vida.\n\n👉 O que podemos fazer:\n• Cobrar resposta da Prefeitura pelo 156\n• Solicitar posicionamento do nosso vereador\n• Registrar denúncia formal no TCM-SP\n\nUnidos somos mais efetivos. Quem topa agir junto? 🙋`,
+
+        vereador: (tipo) => `Prezado(a) Vereador(a),\n\nVenho, na qualidade de cidadão(ã) e morador(a) desta cidade, trazer ao seu conhecimento uma irregularidade de caráter público identificada em nossa região.\n\nTIPO DE OCORRÊNCIA: ${tipo}\nDATA DE IDENTIFICAÇÃO: 14/03/2026\nFONTE: Zelador Cívico — Sistema de Auditoria Municipal SP\n\nA situação evidencia descumprimento de obrigações contratuais e/ou administrativas pelo Poder Executivo Municipal, com impacto direto na população local.\n\nSolicito respeitosamente que V.Exa. se manifeste sobre o tema, requisite informações ao Executivo e, se entender pertinente, apresente requerimento de fiscalização ou indicação para providências junto à Prefeitura.\n\nColoco-me à disposição para fornecer dados complementares.\n\nAtenciosamente,\n[Nome do Cidadão]`,
+
+        tcm: (tipo) => `REPRESENTAÇÃO AO TRIBUNAL DE CONTAS DO MUNICÍPIO DE SÃO PAULO\n\nAo Exmo. Sr. Conselheiro Presidente do TCM-SP,\n\nO(A) signatário(a), cidadão(ã) paulistano(a), vem respeitosamente apresentar REPRESENTAÇÃO com fundamento no Art. 113 da Lei Federal 8.666/93 (c/c Art. 169 da Lei 14.133/2021) e no Regimento Interno do TCM-SP, em face de irregularidade identificada em contrato municipal.\n\nFATO: Identificou-se ocorrência classificada como "${tipo}" em equipamento/serviço público municipal, com indícios de descumprimento contratual, ineficiência na aplicação de recursos públicos e possível violação aos princípios da legalidade, eficiência e economicidade (Art. 37 da CF/88).\n\nPEDIDO: Requer-se a abertura de procedimento de auditoria para verificação do cumprimento contratual, apuração de eventuais irregularidades e adoção das medidas corretivas cabíveis.\n\nTermos em que pede deferimento.\n\nSão Paulo, 14 de março de 2026.\n[Nome e CPF do Representante]`,
+
+        mp: (tipo) => `NOTÍCIA DE FATO\nAo Ministério Público do Estado de São Paulo\nPromotor(a) de Justiça com atribuição em Patrimônio Público e Social\n\nO(A) noticiante, cidadão(ã) brasileiro(a), vem apresentar NOTÍCIA DE FATO referente a possível ato de improbidade administrativa e/ou omissão do Poder Público Municipal de São Paulo.\n\nFATO NOTICIADO: "${tipo}" — irregularidade identificada em serviço/contrato público municipal, com evidências de descumprimento de obrigações legais e contratuais pelo Poder Executivo.\n\nENQUADRAMENTO JURÍDICO SUGERIDO:\n• Art. 10 da Lei 8.429/1992 — Atos que causam prejuízo ao erário\n• Art. 11 da Lei 8.429/1992 — Atos que atentam contra princípios da Administração\n• Art. 37, §6º da CF/88 — Responsabilidade civil do Estado por omissão\n\nPEDIDO: Instauração de procedimento investigatório para apurar os fatos, identificar responsáveis e adotar as medidas judiciais e extrajudiciais cabíveis.\n\nSão Paulo, 14 de março de 2026.\n[Nome, CPF e contato do Noticiante]`
+    };
+
+    function simularDelay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function abrirSintese(id, tipo, local) {
+        sinteseAtual = { id, tipo, local, texto: '' };
+
+        document.getElementById('sintese-titulo').textContent = tipo;
+        document.getElementById('sintese-sub').textContent = `Ocorrência ${id} · 14/03/2026 · [SIMULAÇÃO]`;
+        document.getElementById('sintese-texto').innerHTML = '';
+        document.getElementById('acao-resultado').classList.remove('visible');
+        document.getElementById('btn-copiar').classList.remove('visible');
+        document.getElementById('modal-sintese').classList.add('open');
+        document.getElementById('sintese-loading').style.display = 'flex';
+
+        ['acao-whats','acao-vereador','acao-tcm','acao-mp'].forEach(b => {
+            document.getElementById(b).disabled = true;
+        });
+
+        await simularDelay(1400);
+
+        const texto = SINTESES_SIMULADAS[tipo] || SINTESES_SIMULADAS['Discrepância Orçamentária'];
+        sinteseAtual.texto = texto;
+        document.getElementById('sintese-loading').style.display = 'none';
+        document.getElementById('sintese-texto').innerHTML = texto.replace(/\n/g, '<br>');
+
+        ['acao-whats','acao-vereador','acao-tcm','acao-mp'].forEach(b => {
+            document.getElementById(b).disabled = false;
+        });
+    }
+
+    async function gerarAcao(tipo) {
+        const resultado = document.getElementById('acao-resultado');
+        const btnCopiar = document.getElementById('btn-copiar');
+        resultado.classList.remove('visible');
+        btnCopiar.classList.remove('visible');
+        resultado.textContent = 'Gerando texto…';
+        resultado.classList.add('visible');
+
+        await simularDelay(900);
+
+        const texto = ACOES_SIMULADAS[tipo](sinteseAtual.tipo);
+        resultado.textContent = texto;
+        btnCopiar.classList.add('visible');
+
+        // Mostra aviso de validação apenas para WhatsApp
+        const aviso = document.getElementById('validacao-aviso');
+        if (tipo === 'whatsapp') {
+            aviso.classList.add('visible');
+        } else {
+            aviso.classList.remove('visible');
+        }
+    }
+
+    function copiarAcao() {
+        const texto = document.getElementById('acao-resultado').textContent;
+        navigator.clipboard.writeText(texto).then(() => {
+            const btn = document.getElementById('btn-copiar');
+            btn.textContent = '✅ Copiado!';
+            setTimeout(() => { btn.textContent = '📋 Copiar texto'; }, 2000);
+        });
+    }
+
+    function fecharSintese(e) {
+        if (e && e.target !== document.getElementById('modal-sintese')) return;
+        document.getElementById('modal-sintese').classList.remove('open');
     }
 
     function abrirModalReal(id) {

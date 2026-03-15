@@ -162,6 +162,42 @@
         .btn-modal-prim:hover { background: #1a4f80; }
         .btn-modal-sec { background: none; border: 1px solid var(--cinza2); cursor: pointer; font-family: 'Syne'; font-size: 12px; font-weight: 700; color: var(--muted); padding: 9px 20px; transition: all .2s; }
         .btn-modal-sec:hover { border-color: var(--azul); color: var(--azul); }
+
+        /* RANKING */
+        .ranking-intro { background: white; border-left: 5px solid var(--ouro); padding: 14px 16px; border-radius: 8px; margin-bottom: 20px; font-family: 'DM Mono'; font-size: 11px; color: var(--muted); line-height: 1.6; }
+        .ranking-intro strong { color: var(--accent); }
+        .ranking-filtros { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+        .ranking-chip { font-family: 'Syne'; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border: 1px solid var(--cinza2); background: white; color: var(--muted); padding: 6px 14px; cursor: pointer; border-radius: 6px; transition: all .2s; }
+        .ranking-chip.active, .ranking-chip:hover { background: var(--azul); color: white; border-color: var(--azul); }
+        .ranking-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+        .ranking-row { background: white; border-radius: 10px; padding: 14px 16px; border: 1px solid var(--cinza2); display: grid; grid-template-columns: 36px 1fr auto; align-items: center; gap: 12px; transition: box-shadow .2s; }
+        .ranking-row:hover { box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+        .ranking-row.destaque { border-color: var(--ouro); background: #fffef0; }
+        .ranking-pos { font-family: 'Bebas Neue'; font-size: 22px; color: var(--muted); text-align: center; line-height: 1; }
+        .ranking-pos.top1 { color: #d4a800; }
+        .ranking-pos.top2 { color: #888; }
+        .ranking-pos.top3 { color: #a0522d; }
+        .ranking-pos.bottom { color: var(--vermelho); }
+        .ranking-zona { font-family: 'Syne'; font-size: 13px; font-weight: 700; color: var(--accent); }
+        .ranking-sub { font-family: 'DM Mono'; font-size: 10px; color: var(--muted); margin-top: 2px; }
+        .ranking-bars { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+        .ranking-bar-row { display: flex; align-items: center; gap: 8px; }
+        .ranking-bar-label { font-family: 'DM Mono'; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); width: 72px; flex-shrink: 0; }
+        .ranking-bar-track { flex: 1; height: 6px; background: var(--cinza2); border-radius: 3px; overflow: hidden; }
+        .ranking-bar-fill { height: 100%; border-radius: 3px; transition: width 1s ease; }
+        .ranking-bar-fill.arrec { background: var(--azul); }
+        .ranking-bar-fill.retorno { background: var(--ouro); }
+        .ranking-val { font-family: 'Bebas Neue'; font-size: 13px; width: 52px; text-align: right; flex-shrink: 0; }
+        .ranking-badge { font-family: 'Syne'; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; white-space: nowrap; align-self: start; }
+        .ranking-badge.superavit { background: #e8f5e9; color: #2e7d32; }
+        .ranking-badge.deficit { background: #ffebee; color: var(--vermelho); }
+        .ranking-badge.equilibrio { background: #fff8e1; color: #f57c00; }
+        .ranking-legenda { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+        .leg-item { display: flex; align-items: center; gap: 6px; font-family: 'DM Mono'; font-size: 10px; color: var(--muted); }
+        .leg-dot { width: 12px; height: 6px; border-radius: 3px; }
+        .ranking-insight { background: #f0f4ff; border: 1px solid #b3c6f5; border-left: 4px solid var(--azul); padding: 14px 16px; border-radius: 8px; margin-top: 4px; }
+        .ranking-insight-titulo { font-family: 'Syne'; font-size: 12px; font-weight: 700; color: var(--azul); margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; }
+        .ranking-insight-texto { font-family: 'DM Mono'; font-size: 11px; color: var(--accent); line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -190,6 +226,7 @@
         <button class="tab-btn" id="tab-btn-alertas" onclick="mudarAba('alertas', this)">ALERTAS</button>
         <button class="tab-btn" id="tab-btn-invest" onclick="mudarAba('investimento', this)">INVESTIMENTO</button>
         <button class="tab-btn" id="tab-btn-licitacoes" onclick="mudarAba('licitacoes', this)">LICITAÇÕES</button>
+        <button class="tab-btn" id="tab-btn-ranking" onclick="mudarAba('ranking', this)">RANKING</button>
     </div>
 
     <div id="tab-radar" class="tab-content active">
@@ -278,6 +315,33 @@
         <iframe id="iframe-licitacoes" src="licitacoes.html"
             style="width:100%; height:calc(100vh - 120px); border:none; display:block;">
         </iframe>
+    </div>
+
+    <div id="tab-ranking" class="tab-content">
+        <div class="secao-titulo" style="color:var(--azul); border-color:var(--azul)">🏆 Ranking · Arrecadação vs. Retorno</div>
+
+        <div class="ranking-intro">
+            <strong>Como funciona:</strong> cada zona de São Paulo arrecada IPTU, ISS e outras taxas municipais. Este ranking compara o quanto cada região <strong>contribui</strong> com o quanto efetivamente <strong>recebe de volta</strong> em serviços, obras e investimentos públicos. Quanto maior o déficit, maior a injustiça fiscal.
+        </div>
+
+        <div class="ranking-filtros">
+            <button class="ranking-chip active" onclick="filtrarRanking('retorno', this)">Menor retorno</button>
+            <button class="ranking-chip" onclick="filtrarRanking('arrecadacao', this)">Maior arrecadação</button>
+            <button class="ranking-chip" onclick="filtrarRanking('deficit', this)">Maior déficit</button>
+            <button class="ranking-chip" onclick="filtrarRanking('superavit', this)">Melhor equilíbrio</button>
+        </div>
+
+        <div class="ranking-legenda">
+            <div class="leg-item"><div class="leg-dot" style="background:var(--azul)"></div>Arrecadação</div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--ouro)"></div>Retorno em serviços</div>
+        </div>
+
+        <div class="ranking-grid" id="ranking-grid"></div>
+
+        <div class="ranking-insight">
+            <div class="ranking-insight-titulo">📊 O que esses dados revelam</div>
+            <div class="ranking-insight-texto" id="ranking-insight-texto"></div>
+        </div>
     </div>
 </div>
 
@@ -646,6 +710,85 @@
         document.getElementById('modal-sintese').classList.remove('open');
     }
 
+    // ── RANKING ───────────────────────────────────────────────────────────
+    const RANKING_DADOS = [
+        { zona: 'Zona Oeste',    sub: 'Pinheiros, Lapa, Butantã',          arrec: 18.4, retorno: 14.1, badge: 'deficit' },
+        { zona: 'Zona Central',  sub: 'Sé, República, Consolação',         arrec: 22.1, retorno: 17.8, badge: 'deficit' },
+        { zona: 'Zona Norte',    sub: 'Santana, Casa Verde, Pirituba',      arrec: 9.2,  retorno: 8.6,  badge: 'equilibrio' },
+        { zona: 'Zona Sul',      sub: 'Campo Limpo, Jabaquara, M\'Boi',     arrec: 7.8,  retorno: 9.4,  badge: 'superavit' },
+        { zona: 'Zona Leste',    sub: 'Penha, Itaim Paulista, Guaianases', arrec: 6.1,  retorno: 8.2,  badge: 'superavit' },
+    ];
+
+    const INSIGHTS = {
+        retorno: 'As zonas Oeste e Central arrecadam os maiores volumes do município, mas apresentam retorno proporcionalmente menor em serviços públicos. Zona Leste e Sul recebem mais do que arrecadam — uma redistribuição parcial que ainda não compensa décadas de subinvestimento histórico.',
+        arrecadacao: 'Zona Central e Zona Oeste concentram quase 60% da arrecadação municipal total, reflexo da alta densidade de imóveis comerciais, escritórios e serviços de alto valor agregado. A base fiscal do município depende fortemente dessas duas regiões.',
+        deficit: 'O déficit de retorno nas zonas mais ricas indica que parte da arrecadação financia serviços em outras regiões — o que é esperado num modelo redistributivo. O problema é quando esse déficit resulta em infraestrutura deteriorada mesmo em regiões que pagam bem.',
+        superavit: 'Zona Sul e Zona Leste recebem mais em investimentos do que arrecadam. Esse superávit de retorno reflete políticas de compensação histórica, mas estudos indicam que o volume ainda é insuficiente frente à demanda reprimida por serviços básicos nessas regiões.'
+    };
+
+    let rankingOrdem = 'retorno';
+
+    function filtrarRanking(tipo, btn) {
+        document.querySelectorAll('.ranking-chip').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        rankingOrdem = tipo;
+        renderRanking();
+    }
+
+    function renderRanking() {
+        const maxArrec = Math.max(...RANKING_DADOS.map(d => d.arrec));
+        const maxRetorno = Math.max(...RANKING_DADOS.map(d => d.retorno));
+
+        let lista = [...RANKING_DADOS];
+        if (rankingOrdem === 'retorno')     lista.sort((a,b) => a.retorno - b.retorno);
+        if (rankingOrdem === 'arrecadacao') lista.sort((a,b) => b.arrec - a.arrec);
+        if (rankingOrdem === 'deficit')     lista.sort((a,b) => (b.arrec - b.retorno) - (a.arrec - a.retorno));
+        if (rankingOrdem === 'superavit')   lista.sort((a,b) => (b.retorno - b.arrec) - (a.retorno - a.arrec));
+
+        const badgeTexto = { superavit: '✅ Superávit', deficit: '⚠ Déficit', equilibrio: '〰 Equilíbrio' };
+        const posClasse = ['top1','top2','top3','','bottom'];
+
+        const grid = document.getElementById('ranking-grid');
+        grid.innerHTML = lista.map((d, i) => {
+            const deficit = (d.arrec - d.retorno).toFixed(1);
+            const sinal = deficit > 0 ? `-R$${deficit}B` : `+R${Math.abs(deficit)}B`;
+            const isDestaque = ultimoCep && d.zona === (document.getElementById('zoneTitle')?.textContent);
+            return `
+            <div class="ranking-row${isDestaque ? ' destaque' : ''}">
+                <div class="ranking-pos ${posClasse[i]}">${i + 1}</div>
+                <div>
+                    <div class="ranking-zona">${d.zona}${isDestaque ? ' 📍' : ''}</div>
+                    <div class="ranking-sub">${d.sub}</div>
+                    <div class="ranking-bars">
+                        <div class="ranking-bar-row">
+                            <span class="ranking-bar-label">Arrecad.</span>
+                            <div class="ranking-bar-track"><div class="ranking-bar-fill arrec" style="width:${(d.arrec/maxArrec*100).toFixed(0)}%"></div></div>
+                            <span class="ranking-val" style="color:var(--azul)">R$${d.arrec}B</span>
+                        </div>
+                        <div class="ranking-bar-row">
+                            <span class="ranking-bar-label">Retorno</span>
+                            <div class="ranking-bar-track"><div class="ranking-bar-fill retorno" style="width:${(d.retorno/maxArrec*100).toFixed(0)}%"></div></div>
+                            <span class="ranking-val" style="color:#b8860b">R$${d.retorno}B</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <span class="ranking-badge ${d.badge}">${badgeTexto[d.badge]}</span>
+                    <div style="font-family:'DM Mono';font-size:10px;color:var(--muted);margin-top:6px;text-align:right">${sinal}/ano</div>
+                </div>
+            </div>`;
+        }).join('');
+
+        document.getElementById('ranking-insight-texto').textContent = INSIGHTS[rankingOrdem];
+    }
+
+    // Inicializa ranking quando a aba é aberta
+    const _mudarAbaOriginal = mudarAba;
+    function mudarAba(id, btn) {
+        _mudarAbaOriginal(id, btn);
+        if (id === 'ranking') renderRanking();
+    }
+
     function abrirModalReal(id) {
         const m = document.getElementById('modal-real-' + id);
         if (m) m.classList.add('open');
@@ -702,4 +845,4 @@
     }
 </script>
 </body>
-</html>
+                        </html>

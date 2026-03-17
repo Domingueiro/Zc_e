@@ -33,9 +33,10 @@
         /* SISTEMA PRINCIPAL */
         #sistema-auditoria { display: none; }
         header { background: var(--azul); color: var(--white); padding: 15px; text-align: center; border-bottom: 4px solid var(--ouro); }
-        .tabs { display: flex; background: #000000; position: sticky; top: 0; z-index: 1000; }
-        .tab-btn { flex: 1; padding: 18px 10px; border: none; background: none; font-family: 'Syne'; font-weight: 700; color: #ffffff; cursor: pointer; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
-        .tab-btn.active { color: var(--ouro); border-bottom: 4px solid var(--ouro); background: #1a1a1a; }
+        .tabs { display: flex; background: #000000; position: sticky; top: 0; z-index: 1000; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .tabs::-webkit-scrollbar { display: none; }
+        .tab-btn { flex-shrink: 0; padding: 14px 16px; border: none; background: none; font-family: 'Syne'; font-weight: 700; color: #ffffff; cursor: pointer; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; white-space: nowrap; }
+        .tab-btn.active { color: var(--ouro); border-bottom: 3px solid var(--ouro); background: #1a1a1a; }
         .tab-content { display: none; padding: 20px; animation: fadeIn 0.4s ease; }
         .tab-content.active { display: block; }
 
@@ -49,7 +50,7 @@
         .local-icon { font-size: 26px; line-height: 1; cursor: pointer; display: inline-block; animation: pulse-local 1.5s infinite; transform-origin: bottom center; }
         @keyframes pulse-local { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(255,184,0,0)); } 50% { transform: scale(1.25); filter: drop-shadow(0 0 8px rgba(255,184,0,0.9)); } }
 
-        .info-box { background: white; padding: 15px; border-radius: 10px; border-left: 5px solid var(--ouro); margin-top: 15px; font-family: 'Barlow'; }
+        .info-box { background: #000; padding: 15px; border-radius: 10px; border-left: 5px solid var(--ouro); margin-top: 15px; font-family: 'Barlow'; color: var(--ouro); }
         .btn-detalhar-popup { display: inline-block; margin-top: 10px; background: #000; color: var(--ouro) !important; padding: 8px 15px; border-radius: 6px; text-decoration: none; font-family: 'Syne'; font-size: 10px; font-weight: bold; text-transform: uppercase; border: 1px solid var(--ouro); cursor: pointer; }
 
         /* LISTA DE ALERTAS NA ABA */
@@ -134,8 +135,8 @@
         .acao-btn .acao-desc { font-family: 'DM Mono'; font-size: 10px; color: var(--muted); line-height: 1.4; }
         .acao-resultado { background: #f5f2ec; border: 1px solid var(--cinza2); border-radius: 10px; padding: 14px; font-family: 'Barlow'; font-size: 12px; color: var(--accent); line-height: 1.7; margin-bottom: 12px; display: none; white-space: pre-wrap; }
         .acao-resultado.visible { display: block; }
-        .btn-copiar { background: var(--azul); color: white; border: none; padding: 8px 18px; font-family: 'Syne'; font-size: 11px; font-weight: 700; cursor: pointer; border-radius: 6px; display: none; }
-        .btn-copiar.visible { display: inline-block; }
+        .btn-copiar { background: var(--azul); color: white; border: none; padding: 8px 18px; font-family: 'Syne'; font-size: 11px; font-weight: 700; cursor: pointer; border-radius: 6px; display: none; flex: 1; }
+        .btn-copiar.visible { display: block; }
         .validacao-aviso { display:none; margin-top:12px; background:#f0f7ff; border:1px solid #b3d4f5; border-left:3px solid #1a6fc4; border-radius:8px; padding:12px 14px; font-family:'DM Mono'; font-size:11px; color:#1a3a5c; line-height:1.6; }
         .validacao-aviso.visible { display:block; }
         .validacao-aviso strong { color:#1a6fc4; }
@@ -232,7 +233,7 @@
     <div id="tab-radar" class="tab-content active">
         <div id="map"></div>
         <div class="info-box">
-            <strong>🔍 STATUS DO PERÍMETRO:</strong>
+            <strong>📍 PONTOS PULSANTES:</strong>
             <span id="status-perimetro">Toque em um ponto pulsante para auditar a anomalia.</span>
         </div>
     </div>
@@ -360,7 +361,19 @@
             <div id="sintese-texto"></div>
         </div>
 
-        <div class="acoes-titulo">O que você pode fazer agora</div>
+        <div class="acao-resultado" id="acao-resultado"></div>
+        <div style="display:flex; gap:10px; margin-top:0;">
+            <button class="btn-copiar" id="btn-copiar" onclick="copiarAcao()">📋 Copiar texto</button>
+            <button class="btn-fechar-sintese" style="margin-top:0; flex:1;" onclick="fecharSintese()">Fechar</button>
+        </div>
+
+        <div class="validacao-aviso" id="validacao-aviso">
+            🔍 <strong>Antes de enviar, valide as informações.</strong><br>
+            O projeto <strong>"Tá Certo Isso Aí?"</strong> da USP (ICMC) verifica a veracidade de textos via WhatsApp usando IA. Envie o conteúdo copiado para o bot antes de distribuir — especialmente ao acionar autoridades.<br><br>
+            Saiba mais: <a href="https://www.icmc.usp.br" target="_blank" rel="noopener">icmc.usp.br</a>
+        </div>
+
+        <div class="acoes-titulo" style="margin-top:20px">O que você pode fazer agora</div>
         <div class="acoes-grid">
             <button class="acao-btn" id="acao-whats" onclick="gerarAcao('whatsapp')">
                 <span class="acao-icon">💬</span>
@@ -384,16 +397,7 @@
             </button>
         </div>
 
-        <div class="acao-resultado" id="acao-resultado"></div>
-        <button class="btn-copiar" id="btn-copiar" onclick="copiarAcao()">📋 Copiar texto</button>
-
-        <div class="validacao-aviso" id="validacao-aviso">
-            🔍 <strong>Antes de enviar, valide as informações.</strong><br>
-            O projeto <strong>"Tá Certo Isso Aí?"</strong> da USP (ICMC) verifica a veracidade de textos via WhatsApp usando IA. Envie o conteúdo copiado para o bot antes de distribuir — especialmente ao acionar autoridades.<br><br>
-            Saiba mais: <a href="https://www.icmc.usp.br" target="_blank" rel="noopener">icmc.usp.br</a>
-        </div>
-
-        <button class="btn-fechar-sintese" onclick="fecharSintese()">Fechar</button>
+        <button class="btn-fechar-sintese" style="margin-top:10px;" onclick="fecharSintese()">Fechar</button>
     </div>
 </div>
 
@@ -525,6 +529,7 @@
         document.getElementById('tab-' + id).classList.add('active');
         if (id === 'radar' && mapa) setTimeout(() => { mapa.invalidateSize(); }, 300);
         if (id === 'licitacoes') enviarCepAoIframe();
+        if (id === 'ranking') renderRanking();
     }
 
     function enviarCepAoIframe() {
@@ -681,6 +686,9 @@
         resultado.textContent = 'Gerando texto…';
         resultado.classList.add('visible');
 
+        // Sobe para mostrar o resultado sendo gerado
+        document.querySelector('.modal-sintese').scrollTo({ top: 0, behavior: 'smooth' });
+
         await simularDelay(900);
 
         const texto = ACOES_SIMULADAS[tipo](sinteseAtual.tipo);
@@ -694,6 +702,9 @@
         } else {
             aviso.classList.remove('visible');
         }
+
+        // Scroll suave para o resultado após gerar
+        resultado.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function copiarAcao() {
@@ -715,7 +726,7 @@
         { zona: 'Zona Oeste',    sub: 'Pinheiros, Lapa, Butantã',          arrec: 18.4, retorno: 14.1, badge: 'deficit' },
         { zona: 'Zona Central',  sub: 'Sé, República, Consolação',         arrec: 22.1, retorno: 17.8, badge: 'deficit' },
         { zona: 'Zona Norte',    sub: 'Santana, Casa Verde, Pirituba',      arrec: 9.2,  retorno: 8.6,  badge: 'equilibrio' },
-        { zona: 'Zona Sul',      sub: 'Campo Limpo, Jabaquara, M\'Boi',     arrec: 7.8,  retorno: 9.4,  badge: 'superavit' },
+        { zona: 'Zona Sul',      sub: 'Campo Limpo, Jabaquara, MBoi Mirim',  arrec: 7.8,  retorno: 9.4,  badge: 'superavit' },
         { zona: 'Zona Leste',    sub: 'Penha, Itaim Paulista, Guaianases', arrec: 6.1,  retorno: 8.2,  badge: 'superavit' },
     ];
 
@@ -783,11 +794,7 @@
     }
 
     // Inicializa ranking quando a aba é aberta
-    const _mudarAbaOriginal = mudarAba;
-    function mudarAba(id, btn) {
-        _mudarAbaOriginal(id, btn);
-        if (id === 'ranking') renderRanking();
-    }
+    // (ranking é renderizado dentro do mudarAba existente — sem sobrescrita)
 
     function abrirModalReal(id) {
         const m = document.getElementById('modal-real-' + id);
@@ -845,4 +852,4 @@
     }
 </script>
 </body>
-                        </html>
+    </html>

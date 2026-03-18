@@ -198,6 +198,40 @@
     ::-webkit-scrollbar-track { background:var(--bg2); }
     ::-webkit-scrollbar-thumb { background:var(--bg3); }
 
+    /* ── DIÁRIO OFICIAL ── */
+    .qd-intro { background:var(--panel);border-left:4px solid var(--gold);padding:14px 16px;margin-bottom:20px;font-size:12px;color:var(--muted);line-height:1.6; }
+    .qd-intro strong { color:var(--text); }
+    .qd-intro a { color:var(--gold-dim);text-decoration:none; }
+    .qd-termos { margin-bottom:20px; }
+    .qd-termos-titulo { font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px; }
+    .qd-termos-lista { display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px; }
+    .qd-termo-chip { font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;padding:5px 12px;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .2s;border-radius:4px; }
+    .qd-termo-chip:hover { border-color:var(--gold);color:var(--gold); }
+    .qd-termo-chip.selected { background:rgba(255,215,0,.12);border-color:var(--gold);color:var(--gold); }
+    .qd-busca-row { display:flex;gap:8px;margin-bottom:20px; }
+    .qd-input { flex:1;background:var(--bg2);border:1px solid var(--border);color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;padding:10px 14px;outline:none;transition:border-color .2s; }
+    .qd-input:focus { border-color:var(--gold); }
+    .qd-input::placeholder { color:var(--muted); }
+    .qd-btn-buscar { background:var(--gold);border:none;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:#000;padding:10px 20px;transition:background .2s;white-space:nowrap; }
+    .qd-btn-buscar:hover { background:#ffe44d; }
+    .qd-btn-buscar:disabled { background:var(--muted);cursor:not-allowed; }
+    .qd-status { font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px; }
+    .qd-spinner { width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .qd-resultados { display:flex;flex-direction:column;gap:12px; }
+    .qd-card { background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--gold);padding:16px; }
+    .qd-card-header { display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap; }
+    .qd-card-data { font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;color:var(--gold);text-transform:uppercase; }
+    .qd-card-trecho { font-size:12px;color:var(--text);line-height:1.7;margin-bottom:10px; }
+    .qd-card-trecho mark { background:rgba(255,215,0,.25);color:var(--gold);padding:1px 3px; }
+    .qd-card-footer { display:flex;gap:10px;align-items:center;flex-wrap:wrap; }
+    .qd-link { font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--gold-dim);text-decoration:none;border:1px solid var(--border);padding:4px 10px;transition:all .2s; }
+    .qd-link:hover { color:var(--gold);border-color:var(--gold); }
+    .qd-custodia { font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1px;color:var(--muted);padding:3px 8px;border:1px solid rgba(46,196,182,.3);color:var(--green); }
+    .qd-empty { text-align:center;padding:40px 20px;color:var(--muted); }
+    .qd-empty-icon { font-size:32px;margin-bottom:10px; }
+    .qd-auto-badge { font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;background:rgba(255,215,0,.1);border:1px solid var(--border);color:var(--gold);padding:3px 8px; }
+
     @media(max-width:600px) {
       header { padding:12px 14px; }
       main { padding:16px 12px 48px; }
@@ -224,6 +258,7 @@
 <div class="subtabs">
   <button class="subtab active" onclick="switchSubtab('licitacoes', this)">📄 Licitações</button>
   <button class="subtab" onclick="switchSubtab('investimento', this)">💰 Investimento</button>
+  <button class="subtab" onclick="switchSubtab('diario', this)">📰 Diário Oficial</button>
 </div>
 
 <main>
@@ -386,6 +421,40 @@
         <span class="eficiencia ruim">ZERO</span>
       </div>
     </div>
+  </div>
+
+  <!-- ═══════════════ ABA: DIÁRIO OFICIAL ═══════════════ -->
+  <div id="panel-diario" class="tab-panel">
+
+    <div class="qd-intro">
+      <strong>Diário Oficial de São Paulo — dados reais</strong><br>
+      Busca automática no <a href="https://queridodiario.ok.org.br" target="_blank" rel="noopener">Querido Diário</a> (OKBR) — plataforma que digitaliza e abre os diários oficiais municipais brasileiros. Os termos são sugeridos automaticamente pelo seu CEP e zona.
+    </div>
+
+    <!-- Termos sugeridos -->
+    <div class="qd-termos">
+      <div class="qd-termos-titulo">
+        Termos sugeridos para sua zona
+        <span class="qd-auto-badge" id="zona-badge" style="margin-left:8px;display:none"></span>
+      </div>
+      <div class="qd-termos-lista" id="termos-lista"></div>
+    </div>
+
+    <!-- Busca manual -->
+    <div class="qd-busca-row">
+      <input class="qd-input" id="qd-input" type="text" placeholder="Ou digite um termo específico…" />
+      <button class="qd-btn-buscar" id="qd-btn" onclick="buscarDiario()">BUSCAR</button>
+    </div>
+
+    <!-- Status -->
+    <div class="qd-status" id="qd-status" style="display:none">
+      <div class="qd-spinner" id="qd-spinner" style="display:none"></div>
+      <span id="qd-status-text"></span>
+    </div>
+
+    <!-- Resultados -->
+    <div class="qd-resultados" id="qd-resultados"></div>
+
   </div>
 
 </main>
@@ -558,6 +627,7 @@ window.addEventListener('message', e => {
     document.getElementById('zoneTitle').textContent = zona;
     document.getElementById('zoneSubtitle').textContent = 'Filtrando licitações pela sua zona (CEP detectado)';
     document.getElementById('zoneBanner').style.display = 'flex';
+    inicializarTermos(zona);
     render();
   }
 });
@@ -568,6 +638,10 @@ function switchSubtab(name, btn) {
   document.querySelectorAll('.subtab').forEach(b => b.classList.remove('active'));
   document.getElementById('panel-' + name).classList.add('active');
   btn.classList.add('active');
+  // Ao entrar na aba do diário, inicializa termos se ainda não foi feito
+  if (name === 'diario' && !zonaAtualQD) {
+    inicializarTermos(activeZona !== 'todas' ? activeZona : 'Cidade');
+  }
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────
@@ -681,6 +755,133 @@ function closeModal(id) {
 }
 document.querySelectorAll('.modal-overlay').forEach(o => {
   o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+
+// ── QUERIDO DIÁRIO ────────────────────────────────────────────────────────
+const QD_IBGE_SP = '3550308';
+const QD_API = 'https://api.queridodiario.ok.org.br/gazettes';
+
+// Camada 1: termos universais
+const TERMOS_UNIVERSAIS = [
+  'licitação', 'contrato', 'dispensa', 'inexigibilidade',
+  'sobrepreço', 'aditivo', 'obra paralisada', 'manutenção'
+];
+
+// Camada 2: termos por zona
+const TERMOS_POR_ZONA = {
+  'Zona Leste':    ['drenagem', 'pavimentação', 'EMEF', 'UBS', 'regularização fundiária', 'Aricanduva'],
+  'Zona Sul':      ['mobilidade', 'creche', 'Campo Limpo', 'Jabaquara', 'Santo Amaro'],
+  'Zona Norte':    ['arborização', 'Casa Verde', 'Santana', 'Tucuruvi', 'Pirituba'],
+  'Zona Oeste':    ['ciclovia', 'Pinheiros', 'Butantã', 'patrimônio histórico', 'Lapa'],
+  'Zona Central':  ['requalificação', 'iluminação', 'cortiço', 'Sé', 'República'],
+  'Cidade':        ['transparência', 'fiscalização', 'contrato emergencial']
+};
+
+let zonaAtualQD = null;
+let termosDisponiveis = [];
+let termosSelecionados = new Set();
+
+function inicializarTermos(zona) {
+  zonaAtualQD = zona;
+  termosDisponiveis = [
+    ...TERMOS_UNIVERSAIS,
+    ...(TERMOS_POR_ZONA[zona] || [])
+  ];
+
+  const badge = document.getElementById('zona-badge');
+  badge.textContent = zona;
+  badge.style.display = 'inline';
+
+  const lista = document.getElementById('termos-lista');
+  lista.innerHTML = termosDisponiveis.map(t => `
+    <button class="qd-termo-chip" onclick="toggleTermo(this, '${t}')">${t}</button>
+  `).join('');
+}
+
+function toggleTermo(btn, termo) {
+  if (termosSelecionados.has(termo)) {
+    termosSelecionados.delete(termo);
+    btn.classList.remove('selected');
+  } else {
+    termosSelecionados.add(termo);
+    btn.classList.add('selected');
+  }
+  // Atualiza o input com os termos selecionados
+  document.getElementById('qd-input').value = [...termosSelecionados].join(' ');
+}
+
+async function buscarDiario() {
+  const query = document.getElementById('qd-input').value.trim();
+  if (!query) return;
+
+  const btn = document.getElementById('qd-btn');
+  const status = document.getElementById('qd-status');
+  const spinner = document.getElementById('qd-spinner');
+  const statusText = document.getElementById('qd-status-text');
+  const resultados = document.getElementById('qd-resultados');
+
+  btn.disabled = true;
+  status.style.display = 'flex';
+  spinner.style.display = 'block';
+  statusText.textContent = `Consultando Diário Oficial de São Paulo…`;
+  resultados.innerHTML = '';
+
+  const url = `${QD_API}?territory_ids=${QD_IBGE_SP}&querystring=${encodeURIComponent(query)}&excerpt_size=400&number_of_excerpts=2&size=8&sort_by=relevance`;
+
+  try {
+    const resp = await fetch(url);
+    const data = await resp.json();
+    const gazettes = data.gazettes || [];
+
+    spinner.style.display = 'none';
+    statusText.textContent = `${gazettes.length} publicação(ões) encontrada(s) para "${query}"`;
+
+    if (!gazettes.length) {
+      resultados.innerHTML = `
+        <div class="qd-empty">
+          <div class="qd-empty-icon">📭</div>
+          <p style="font-family:'Barlow Condensed';letter-spacing:1px;text-transform:uppercase;font-size:12px">
+            Nenhuma publicação encontrada para este termo
+          </p>
+        </div>`;
+      btn.disabled = false;
+      return;
+    }
+
+    resultados.innerHTML = gazettes.map((g, i) => {
+      const trechos = (g.excerpts || []).map(t =>
+        t.replace(/<.*?>/g, '').substring(0, 400)
+      ).join('<br><br>');
+
+      const dataFormatada = g.date
+        ? new Date(g.date + 'T00:00:00').toLocaleDateString('pt-BR')
+        : '—';
+
+      return `
+        <div class="qd-card" style="animation-delay:${i*0.08}s">
+          <div class="qd-card-header">
+            <span class="qd-card-data">📅 ${dataFormatada}</span>
+            <span class="qd-custodia">✓ Fonte oficial arquivável</span>
+          </div>
+          <div class="qd-card-trecho">${trechos || 'Trecho não disponível.'}</div>
+          <div class="qd-card-footer">
+            <a class="qd-link" href="${g.url}" target="_blank" rel="noopener">📄 Ver documento original ↗</a>
+            <a class="qd-link" href="https://web.archive.org/save/${g.url}" target="_blank" rel="noopener">🗄 Arquivar evidência</a>
+          </div>
+        </div>`;
+    }).join('');
+
+  } catch(e) {
+    spinner.style.display = 'none';
+    statusText.textContent = 'Erro ao consultar o Querido Diário. Tente novamente.';
+  }
+
+  btn.disabled = false;
+}
+
+// Enter no input dispara busca
+document.getElementById('qd-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') buscarDiario();
 });
 
 // ── INIT ──────────────────────────────────────────────────────────────────

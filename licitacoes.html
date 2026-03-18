@@ -232,6 +232,23 @@
     .qd-empty-icon { font-size:32px;margin-bottom:10px; }
     .qd-auto-badge { font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;background:rgba(255,215,0,.1);border:1px solid var(--border);color:var(--gold);padding:3px 8px; }
 
+    /* ── VEREDITO ── */
+    .qd-btn-interpretar { background:none;border:1px solid var(--gold);color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;padding:5px 12px;cursor:pointer;transition:all .2s;margin-top:10px; }
+    .qd-btn-interpretar:hover { background:rgba(255,215,0,.1); }
+    .qd-btn-interpretar:disabled { border-color:var(--muted);color:var(--muted);cursor:not-allowed; }
+    .qd-veredito { margin-top:12px;padding:14px;border-radius:4px;display:none;animation:fadeIn .3s ease; }
+    .qd-veredito.visible { display:block; }
+    .qd-veredito.verde  { background:rgba(46,196,182,.08);border:1px solid rgba(46,196,182,.3);border-left:4px solid var(--green); }
+    .qd-veredito.amarelo { background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.25);border-left:4px solid var(--gold); }
+    .qd-veredito.vermelho { background:rgba(230,57,70,.08);border:1px solid rgba(230,57,70,.3);border-left:4px solid var(--red); }
+    .qd-veredito-badge { font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;margin-bottom:8px;display:flex;align-items:center;gap:8px; }
+    .qd-veredito.verde  .qd-veredito-badge { color:var(--green); }
+    .qd-veredito.amarelo .qd-veredito-badge { color:var(--gold); }
+    .qd-veredito.vermelho .qd-veredito-badge { color:var(--red); }
+    .qd-veredito-texto { font-size:12px;color:var(--text);line-height:1.7; }
+    .qd-veredito-impacto { font-size:11px;color:var(--muted);margin-top:8px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px; }
+    .qd-interpretando { display:flex;align-items:center;gap:8px;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;color:var(--muted);margin-top:10px; }
+
     @media(max-width:600px) {
       header { padding:12px 14px; }
       main { padding:16px 12px 48px; }
@@ -851,14 +868,16 @@ async function buscarDiario() {
     resultados.innerHTML = gazettes.map((g, i) => {
       const trechos = (g.excerpts || []).map(t =>
         t.replace(/<.*?>/g, '').substring(0, 400)
-      ).join('<br><br>');
+      ).join(' ');
 
       const dataFormatada = g.date
         ? new Date(g.date + 'T00:00:00').toLocaleDateString('pt-BR')
         : '—';
 
+      const trechoSeguro = trechos.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+
       return `
-        <div class="qd-card" style="animation-delay:${i*0.08}s">
+        <div class="qd-card" style="animation-delay:${i*0.08}s" id="qd-card-${i}">
           <div class="qd-card-header">
             <span class="qd-card-data">📅 ${dataFormatada}</span>
             <span class="qd-custodia">✓ Fonte oficial arquivável</span>
@@ -868,6 +887,10 @@ async function buscarDiario() {
             <a class="qd-link" href="${g.url}" target="_blank" rel="noopener">📄 Ver documento original ↗</a>
             <a class="qd-link" href="https://web.archive.org/save/${g.url}" target="_blank" rel="noopener">🗄 Arquivar evidência</a>
           </div>
+          <button class="qd-btn-interpretar" onclick="interpretarPublicacao(${i}, '${trechoSeguro}', '${dataFormatada}')">
+            🔍 INTERPRETAR PARA O CIDADÃO
+          </button>
+          <div class="qd-veredito" id="veredito-${i}"></div>
         </div>`;
     }).join('');
 
@@ -879,7 +902,172 @@ async function buscarDiario() {
   btn.disabled = false;
 }
 
-// Enter no input dispara busca
+// ── INTERPRETAÇÃO CIDADÃ ──────────────────────────────────────────────────
+
+// Simulação inteligente — detecta padrões no texto e gera veredito
+function analisarTexto(texto) {
+  const t = texto.toLowerCase();
+
+  const sinaisRuins = [
+    'dispensa', 'inexigibilidade', 'emergencial', 'urgente',
+    'sobrepreço', 'aditivo', 'rescisão', 'paralisada', 'paralisado',
+    'irregular', 'irregularidade', 'impugnação', 'suspensão',
+    'único fornecedor', 'fornecedor único'
+  ];
+  const sinaisBons = [
+    'homologado', 'concluído', 'entregue', 'inaugurado',
+    'licitação pública', 'pregão eletrônico', 'menor preço',
+    'economia', 'redução de custo', 'conclusão'
+  ];
+  const sinaisAtencao = [
+    'contrato', 'licitação', 'obra', 'serviço', 'manutenção',
+    'pavimentação', 'drenagem', 'iluminação', 'reforma'
+  ];
+
+  const pontosRuins  = sinaisRuins.filter(s => t.includes(s)).length;
+  const pontosBons   = sinaisBons.filter(s => t.includes(s)).length;
+
+  if (pontosRuins >= 2) return 'vermelho';
+  if (pontosBons >= 2)  return 'verde';
+  return 'amarelo';
+}
+
+function gerarSinteseSimulada(texto, cor, zona) {
+  const t = texto.toLowerCase();
+
+  // Registra exatamente quais sinais foram detectados
+  const sinaisRuinsDetectados = [
+    { termo: 'dispensa',          descricao: 'dispensa de licitação — contratação sem processo competitivo' },
+    { termo: 'inexigibilidade',   descricao: 'inexigibilidade — contratação direta sem concorrência' },
+    { termo: 'emergencial',       descricao: 'caráter emergencial declarado' },
+    { termo: 'urgente',           descricao: 'urgência declarada — verificar se é justificada' },
+    { termo: 'sobrepreço',        descricao: 'sobrepreço identificado ou mencionado' },
+    { termo: 'aditivo',           descricao: 'aditivo contratual — amplia valor ou prazo original' },
+    { termo: 'rescisão',          descricao: 'rescisão contratual — contrato encerrado antes do prazo' },
+    { termo: 'paralisada',        descricao: 'obra ou serviço paralisado' },
+    { termo: 'paralisado',        descricao: 'obra ou serviço paralisado' },
+    { termo: 'irregular',         descricao: 'irregularidade mencionada no próprio documento' },
+    { termo: 'impugnação',        descricao: 'impugnação ao processo licitatório' },
+    { termo: 'fornecedor único',  descricao: 'fornecedor único — ausência de concorrência' },
+    { termo: 'único fornecedor',  descricao: 'único fornecedor — ausência de concorrência' },
+  ].filter(s => t.includes(s.termo));
+
+  const sinaisBonsDetectados = [
+    { termo: 'homologado',        descricao: 'processo homologado regularmente' },
+    { termo: 'concluído',         descricao: 'obra ou serviço concluído' },
+    { termo: 'entregue',          descricao: 'entrega confirmada' },
+    { termo: 'inaugurado',        descricao: 'inauguração registrada' },
+    { termo: 'pregão eletrônico', descricao: 'pregão eletrônico — processo competitivo' },
+    { termo: 'menor preço',       descricao: 'critério de menor preço — competição saudável' },
+    { termo: 'economia',          descricao: 'economia de recursos mencionada' },
+  ].filter(s => t.includes(s.termo));
+
+  const todosDetectados = cor === 'vermelho' ? sinaisRuinsDetectados
+                        : cor === 'verde'    ? sinaisBonsDetectados
+                        : [...sinaisBonsDetectados, ...sinaisRuinsDetectados];
+
+  const fundamentacao = todosDetectados.length
+    ? todosDetectados.map(s => `<li><code style="background:rgba(255,255,255,.08);padding:1px 5px;font-size:11px">${s.termo}</code> — ${s.descricao}</li>`).join('')
+    : '<li>Análise baseada no contexto geral do texto — nenhum termo de alerta específico identificado</li>';
+
+  if (cor === 'vermelho') {
+    return {
+      resumo: `Esta publicação apresenta ${sinaisRuinsDetectados.length} sinal(is) de irregularidade que merece(m) atenção cidadã.`,
+      detalhes: sinaisRuinsDetectados.length
+        ? sinaisRuinsDetectados.map(s => s.descricao).join('; ') + '.'
+        : 'O texto contém elementos associados a irregularidades em contratações públicas.',
+      impacto: `Impacto para ${zona || 'sua região'}: recursos públicos podem estar sendo aplicados sem a transparência exigida por lei.`,
+      acao: 'Recomenda-se consultar o contrato completo e considerar representação ao TCM-SP.',
+      fundamentacao
+    };
+  }
+
+  if (cor === 'verde') {
+    return {
+      resumo: 'Publicação com indicadores positivos — processo aparentemente regular.',
+      detalhes: sinaisBonsDetectados.length
+        ? sinaisBonsDetectados.map(s => s.descricao).join('; ') + '.'
+        : 'O texto apresenta elementos de conformidade com os procedimentos esperados.',
+      impacto: `Boas notícias para ${zona || 'sua região'}: a administração pública está seguindo os procedimentos esperados neste caso.`,
+      acao: 'Acompanhe a execução para garantir que o contrato seja cumprido conforme publicado.',
+      fundamentacao
+    };
+  }
+
+  return {
+    resumo: 'Publicação em análise — requer atenção mas sem irregularidade evidente.',
+    detalhes: 'O texto trata de contratação ou obra pública na sua região. Os dados técnicos precisam ser verificados para conclusão.',
+    impacto: `Esta publicação pode afetar ${zona || 'sua região'} diretamente. Vale acompanhar o andamento.`,
+    acao: 'Arquive a evidência e monitore publicações futuras sobre o mesmo contrato.',
+    fundamentacao
+  };
+}
+
+const ICONE_VEREDITO = { verde: '🟢', amarelo: '🟡', vermelho: '🔴' };
+const LABEL_VEREDITO = { verde: 'REGULAR', amarelo: 'ATENÇÃO', vermelho: 'IRREGULARIDADE DETECTADA' };
+
+async function interpretarPublicacao(idx, texto, data) {
+  const btn = document.querySelector(`#qd-card-${idx} .qd-btn-interpretar`);
+  const veredito = document.getElementById(`veredito-${idx}`);
+
+  btn.disabled = true;
+  btn.textContent = 'Analisando…';
+  veredito.className = 'qd-veredito';
+  veredito.innerHTML = `<div class="qd-interpretando"><div class="qd-spinner"></div> Interpretando publicação para linguagem cidadã…</div>`;
+  veredito.classList.add('visible');
+
+  // Simula delay de processamento
+  await new Promise(r => setTimeout(r, 1200));
+
+  /* ── SLOT API REAL ────────────────────────────────────────────
+     Quando a API Claude estiver disponível, substituir o bloco
+     abaixo por uma chamada real:
+
+     const resp = await fetch('https://api.anthropic.com/v1/messages', {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({
+         model: 'claude-sonnet-4-20250514',
+         max_tokens: 600,
+         messages: [{ role: 'user', content:
+           `Você é especialista em direito administrativo e auditoria municipal SP.
+            Analise este trecho do Diário Oficial de São Paulo e responda em JSON:
+            {"veredito": "verde|amarelo|vermelho", "resumo": "...", "detalhes": "...", "impacto": "...", "acao": "..."}
+            Trecho: ${texto}` }]
+       })
+     });
+     const apiData = await resp.json();
+     const result = JSON.parse(apiData.content[0].text);
+  ── FIM SLOT API REAL ──────────────────────────────────────── */
+
+  // Análise simulada
+  const cor = analisarTexto(texto);
+  const sintese = gerarSinteseSimulada(texto, cor, zonaAtualQD);
+
+  veredito.className = `qd-veredito ${cor} visible`;
+  veredito.innerHTML = `
+    <div class="qd-veredito-badge">
+      ${ICONE_VEREDITO[cor]} ${LABEL_VEREDITO[cor]}
+    </div>
+    <div class="qd-veredito-texto">
+      <strong>${sintese.resumo}</strong><br><br>
+      ${sintese.detalhes}<br><br>
+      ${sintese.acao}
+    </div>
+    <div class="qd-veredito-impacto">📍 ${sintese.impacto}</div>
+    <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08)">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">
+        🔎 Como cheguei a essa conclusão
+      </div>
+      <ul style="padding-left:16px;font-size:11px;color:var(--muted);line-height:1.8;font-family:'Barlow',sans-serif">
+        ${sintese.fundamentacao}
+      </ul>
+    </div>
+  `;
+
+  btn.textContent = '🔄 REANALISAR';
+  btn.disabled = false;
+}
 document.getElementById('qd-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') buscarDiario();
 });

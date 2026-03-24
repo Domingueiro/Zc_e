@@ -176,7 +176,29 @@
         .ranking-insight-titulo { font-family: 'Syne'; font-size: 12px; font-weight: 700; color: var(--azul); margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; }
         .ranking-insight-texto { font-family: 'DM Mono'; font-size: 11px; color: var(--accent); line-height: 1.6; }
 
-        /* GRÁFICOS RANKING */
+        /* EMENDAS PARLAMENTARES */
+        .emenda-x-icon { font-size: 18px; line-height: 1; cursor: pointer; display: inline-block; color: #000; font-weight: 900; animation: pulse-emenda 1.5s infinite; transform-origin: center; }
+        @keyframes pulse-emenda { 0%,100% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(0,0,0,0)); } 50% { transform: scale(1.4); filter: drop-shadow(0 0 6px rgba(0,0,0,0.7)); } }
+        .emenda-card { background: white; border-radius: 10px; padding: 16px 18px; border-left: 5px solid #6a1b9a; margin-bottom: 12px; animation: fadeIn 0.4s ease both; }
+        .emenda-card-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+        .emenda-card-id { font-family: 'Syne'; font-weight: 700; font-size: 12px; color: #6a1b9a; text-transform: uppercase; }
+        .emenda-card-ano { font-family: 'DM Mono'; font-size: 11px; color: var(--muted); }
+        .emenda-valor { font-family: 'Bebas Neue'; font-size: 24px; color: #6a1b9a; line-height: 1; margin-bottom: 6px; }
+        .emenda-doador { font-family: 'Syne'; font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+        .emenda-doador span { font-family: 'DM Mono'; font-size: 10px; color: var(--muted); font-weight: 400; }
+        .emenda-destino { font-family: 'Barlow'; font-size: 12px; color: var(--accent); margin-bottom: 4px; line-height: 1.4; }
+        .emenda-cnpj { font-family: 'DM Mono'; font-size: 10px; color: var(--muted); }
+        .emenda-objeto { font-family: 'DM Mono'; font-size: 11px; color: var(--muted); margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--cinza2); line-height: 1.5; }
+        .emenda-tipo-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-family: 'Syne'; font-size: 10px; font-weight: 700; letter-spacing: 1px; margin-top: 8px; }
+        .emenda-tipo-badge.obra { background: #e3f2fd; color: #0d47a1; }
+        .emenda-tipo-badge.social { background: #e8f5e9; color: #1b5e20; }
+        .emenda-tipo-badge.saude { background: #fce4ec; color: #880e4f; }
+        .emenda-tipo-badge.educacao { background: #fff8e1; color: #e65100; }
+        .emenda-resumo { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+        .emenda-resumo-chip { background: #f3e5f5; border: 1px solid #ce93d8; border-radius: 6px; padding: 6px 12px; font-family: 'DM Mono'; font-size: 10px; color: #6a1b9a; }
+        .emenda-resumo-chip strong { font-size: 14px; font-family: 'Bebas Neue'; display: block; color: #4a148c; }
+
+        
         .rk-grafico-wrap { margin-bottom: 28px; }
         .rk-grafico-titulo { font-family: 'Syne'; font-weight: 700; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--azul); margin-bottom: 4px; }
         .rk-grafico-sub { font-family: 'DM Mono'; font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
@@ -223,6 +245,7 @@
     <div class="tabs">
         <button class="tab-btn active" id="tab-btn-radar" onclick="mudarAba('radar', this)">RADAR</button>
         <button class="tab-btn" id="tab-btn-alertas" onclick="mudarAba('alertas', this)">ALERTAS</button>
+        <button class="tab-btn" id="tab-btn-emendas" onclick="mudarAba('emendas', this)">EMENDAS</button>
         <button class="tab-btn" id="tab-btn-invest" onclick="mudarAba('investimento', this)">INVEST. <span style="font-size:9px;letter-spacing:0.5px">LOCAL</span></button>
         <button class="tab-btn" id="tab-btn-licitacoes" onclick="mudarAba('licitacoes', this)">LICITAÇÕES</button>
         <button class="tab-btn" id="tab-btn-ranking" onclick="mudarAba('ranking', this)">RANKING</button>
@@ -240,6 +263,20 @@
         <div class="secao-titulo" style="color:var(--vermelho); border-color:var(--vermelho)">⚠ Alertas do seu perímetro</div>
         <div id="conteudo-alerta">
             <p style="font-family: 'DM Mono';">Nenhuma anomalia detectada ainda. Insira um CEP no radar.</p>
+        </div>
+    </div>
+
+    <!-- ABA EMENDAS PARLAMENTARES -->
+    <div id="tab-emendas" class="tab-content">
+        <div class="secao-titulo" style="color:#6a1b9a; border-color:#6a1b9a">🏛 Emendas Parlamentares · Seu Perímetro</div>
+        <p style="font-family:'DM Mono'; font-size:11px; color:var(--muted); margin-bottom:16px;">Recursos destinados por vereadores e gabinetes a entidades e obras na sua região · Exercício 2022–2024</p>
+
+        <div id="emendas-zona-aviso" style="display:none; background:#f3e5f5; border-left:4px solid #6a1b9a; border-radius:8px; padding:12px 14px; margin-bottom:16px; font-family:'DM Mono'; font-size:11px; color:#4a148c; line-height:1.6;">
+            📍 Mostrando emendas destinadas ao perímetro do CEP consultado e à sua zona.
+        </div>
+
+        <div id="conteudo-emendas">
+            <p style="font-family:'DM Mono'; font-size:12px; color:var(--muted);">Insira um CEP no Radar para visualizar as emendas do seu perímetro.</p>
         </div>
     </div>
 
@@ -720,6 +757,123 @@
         document.getElementById('ranking-insight-texto').textContent = RK_INSIGHTS['todas'];
     }
 
+    // ── EMENDAS PARLAMENTARES ─────────────────────────────────────────────
+    var emendaMarkers = L.layerGroup ? null : null; // inicializado em iniciarSistema
+
+    const EMENDAS_DADOS = [
+        {
+            id: 'EMP-2023-001', ano: 2023,
+            doador: 'Ver. Carlos Bezerra Jr.', gabinete: 'Gabinete 14 · PT',
+            valor: 250000,
+            destinatario: 'Associação Comunitária Jardim Ângela',
+            cnpj: '12.345.678/0001-90',
+            objeto: 'Reforma e ampliação da sede social, incluindo salão multiuso e banheiros acessíveis.',
+            tipo: 'social',
+            offsetLat: 0.0012, offsetLon: -0.0008
+        },
+        {
+            id: 'EMP-2023-002', ano: 2023,
+            doador: 'Ver. Silvia Ferraro', gabinete: 'Gabinete 31 · PSOL',
+            valor: 180000,
+            destinatario: 'EMEF Prof. Waldomiro Palmério',
+            cnpj: null,
+            objeto: 'Aquisição de equipamentos de informática e reforma da sala de leitura.',
+            tipo: 'educacao',
+            offsetLat: -0.0015, offsetLon: 0.0020
+        },
+        {
+            id: 'EMP-2022-003', ano: 2022,
+            doador: 'Ver. Rubinho Nunes', gabinete: 'Gabinete 42 · União',
+            valor: 400000,
+            destinatario: 'Santa Casa de Misericórdia — Unidade Sul',
+            cnpj: '57.571.275/0001-00',
+            objeto: 'Aquisição de equipamentos hospitalares para UTI neonatal.',
+            tipo: 'saude',
+            offsetLat: 0.0005, offsetLon: 0.0018
+        },
+        {
+            id: 'EMP-2024-004', ano: 2024,
+            doador: 'Ver. Janaína Pascal', gabinete: 'Gabinete 07 · PL',
+            valor: 320000,
+            destinatario: 'Subprefeitura M\'Boi Mirim — Obras',
+            cnpj: null,
+            objeto: 'Pavimentação de vias em CPTM Jardim Silveira e entorno.',
+            tipo: 'obra',
+            offsetLat: -0.0022, offsetLon: -0.0014
+        },
+        {
+            id: 'EMP-2022-005', ano: 2022,
+            doador: 'Ver. Sonaira Fernandes', gabinete: 'Gabinete 19 · Republicanos',
+            valor: 150000,
+            destinatario: 'Instituto Cidadania e Esporte da Periferia',
+            cnpj: '34.567.890/0001-11',
+            objeto: 'Custeio de atividades esportivas e culturais para jovens em vulnerabilidade social.',
+            tipo: 'social',
+            offsetLat: 0.0030, offsetLon: 0.0005
+        },
+    ];
+
+    function formatarReais(v) {
+        return 'R$ ' + v.toLocaleString('pt-BR');
+    }
+
+    function plotarEmendas(lat, lon) {
+        if (!emendaMarkers) return;
+        emendaMarkers.clearLayers();
+
+        EMENDAS_DADOS.forEach(e => {
+            const eLat = lat + e.offsetLat;
+            const eLon = lon + e.offsetLon;
+            const icon = L.divIcon({
+                className: '',
+                html: '<div class="emenda-x-icon">✕</div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
+            L.marker([eLat, eLon], { icon })
+                .addTo(emendaMarkers)
+                .on('click', () => {
+                    document.getElementById('tab-btn-emendas').click();
+                    setTimeout(() => {
+                        const el = document.querySelector(`.emenda-card[data-id="${e.id}"]`);
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 200);
+                });
+        });
+    }
+
+    function renderEmendas() {
+        const container = document.getElementById('conteudo-emendas');
+        const aviso = document.getElementById('emendas-zona-aviso');
+        aviso.style.display = 'block';
+
+        const totalValor = EMENDAS_DADOS.reduce((s, e) => s + e.valor, 0);
+        const totalEmendas = EMENDAS_DADOS.length;
+        const vereadores = [...new Set(EMENDAS_DADOS.map(e => e.doador))].length;
+
+        container.innerHTML = `
+            <div class="emenda-resumo">
+                <div class="emenda-resumo-chip"><strong>${totalEmendas}</strong> emendas</div>
+                <div class="emenda-resumo-chip"><strong>${formatarReais(totalValor)}</strong> total</div>
+                <div class="emenda-resumo-chip"><strong>${vereadores}</strong> vereadores</div>
+            </div>
+            ${EMENDAS_DADOS.map((e, i) => `
+            <div class="emenda-card" data-id="${e.id}" style="animation-delay:${i*0.1}s">
+                <div class="emenda-card-header">
+                    <span class="emenda-card-id">✕ ${e.id}</span>
+                    <span class="emenda-card-ano">${e.ano}</span>
+                </div>
+                <div class="emenda-valor">${formatarReais(e.valor)}</div>
+                <div class="emenda-doador">🏛 ${e.doador} <span>· ${e.gabinete}</span></div>
+                <div class="emenda-destino">→ ${e.destinatario}</div>
+                ${e.cnpj ? `<div class="emenda-cnpj">CNPJ: ${e.cnpj}</div>` : '<div class="emenda-cnpj" style="color:#f57c00">⚠ Sem CNPJ registrado</div>'}
+                <div class="emenda-objeto">${e.objeto}</div>
+                <span class="emenda-tipo-badge ${e.tipo}">${e.tipo.toUpperCase()}</span>
+            </div>
+            `).join('')}
+        `;
+    }
+
     // ── SISTEMA PRINCIPAL ─────────────────────────────────────────────────
     var mapa = null;
     var markersLayer = null;
@@ -789,6 +943,10 @@
         alertasDetectados.push({ id: idLocal, tipo: 'Sinalização Crítica no Local', local: true });
 
         document.getElementById('status-perimetro').innerText = "4 anomalias detectadas — toque em um ponto para ver detalhes.";
+
+        // Plota markers de emendas no mapa
+        plotarEmendas(lat, lon);
+        renderEmendas();
 
         for (let i = 0; i < 3; i++) {
             const rLat = lat + (Math.random() - 0.5) * 0.006;
@@ -938,6 +1096,7 @@
                 attribution: '© OpenStreetMap contributors'
             }).addTo(mapa);
             markersLayer = L.layerGroup().addTo(mapa);
+            emendaMarkers = L.layerGroup().addTo(mapa);
         }
 
         fetch(`https://viacep.com.br/ws/${cep}/json/`)

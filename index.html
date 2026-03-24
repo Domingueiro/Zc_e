@@ -256,6 +256,11 @@
         <div class="info-box">
             <strong>📍 PONTOS PULSANTES:</strong>
             <span id="status-perimetro">Toque em um ponto pulsante para auditar a anomalia.</span>
+            <div style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,215,0,0.3); font-size:12px; line-height:1.6;">
+                <span style="color:var(--vermelho)">●</span> Anomalia detectada &nbsp;·&nbsp;
+                <span style="color:var(--ouro-alaranjado)">📍</span> Seu endereço &nbsp;·&nbsp;
+                <span style="color:#fff; font-weight:900;">✕</span> Emenda parlamentar
+            </div>
         </div>
     </div>
 
@@ -613,7 +618,11 @@
                 ds.borderColor = ativo ? RK_ZONAS[i].cor : RK_ZONAS[i].cor + '28';
                 ds.pointBackgroundColor = ativo ? RK_ZONAS[i].cor : RK_ZONAS[i].cor + '28';
                 ds.borderWidth = ativo ? (key === 'todas' ? 2.5 : 3.5) : 1;
-                ds.pointRadius = ativo ? (key === 'todas' ? 5 : 7) : 3;
+                ds.pointRadius = ativo ? (key === 'todas' ? 5 : 7) : 2;
+                ds.datalabels = {
+                    ...ds.datalabels,
+                    display: ativo,
+                };
             });
             chart.update('none');
         }

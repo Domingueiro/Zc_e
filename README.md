@@ -1,4 +1,4 @@
-# Zelador Cívico: Tomografia do Impacto Urbano 🚀
+# Zelador Cívico: Topografia do Impacto Urbano 🚀
 
 ## 📍 Sobre o Projeto
 O **Zelador Cívico** é uma plataforma de transparência radical e auditoria social desenhada para territorializar o orçamento público. O projeto nasce da necessidade de romper a opacidade dos dados governamentais e devolvê-los ao cidadão de forma visual, geográfica e compreensível.

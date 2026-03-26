@@ -246,6 +246,7 @@
         <button class="tab-btn active" id="tab-btn-radar" onclick="mudarAba('radar', this)">RADAR</button>
         <button class="tab-btn" id="tab-btn-alertas" onclick="mudarAba('alertas', this)">ALERTAS</button>
         <button class="tab-btn" id="tab-btn-emendas" onclick="mudarAba('emendas', this)">EMENDAS</button>
+        <button class="tab-btn" id="tab-btn-vereadores" onclick="mudarAba('vereadores', this)">VEREADORES</button>
         <button class="tab-btn" id="tab-btn-invest" onclick="mudarAba('investimento', this)">INVEST. <span style="font-size:9px;letter-spacing:0.5px">LOCAL</span></button>
         <button class="tab-btn" id="tab-btn-licitacoes" onclick="mudarAba('licitacoes', this)">LICITAÇÕES</button>
         <button class="tab-btn" id="tab-btn-ranking" onclick="mudarAba('ranking', this)">RANKING</button>
@@ -283,6 +284,12 @@
         <div id="conteudo-emendas">
             <p style="font-family:'DM Mono'; font-size:12px; color:var(--muted);">Insira um CEP no Radar para visualizar as emendas do seu perímetro.</p>
         </div>
+    </div>
+
+    <div id="tab-vereadores" class="tab-content" style="padding:0;">
+        <iframe id="iframe-vereadores" src="vereadores.html"
+            style="width:100%; height:calc(100vh - 120px); border:none; display:block;">
+        </iframe>
     </div>
 
     <div id="tab-investimento" class="tab-content">

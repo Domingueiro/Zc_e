@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Radar de Vereadores · Zelador Cívico</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;600;700&family=DM+Mono:wght@400;500&family=Syne:wght@700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f2ec; --bg2: #ffffff; --azul: #003f6b; --text: #1a3a5c;
+      --muted: #8a8478; --border: #dde1e7; --gold: #FFD700;
+      --vermelho: #c62828; --roxo: #6a1b9a; --verde: #2e7d32; --laranja: #b45309;
+    }
+    html, body { min-height:100vh; background:var(--bg); color:var(--text); font-family:'Barlow',sans-serif; }
+    body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(0,63,107,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,63,107,.04) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; z-index:0; }
+
+    header { position:relative; z-index:10; background:var(--azul); border-bottom:3px solid var(--gold); padding:14px 18px; display:flex; align-items:center; gap:14px; }
+    .logo { font-family:'Bebas Neue'; font-size:22px; letter-spacing:4px; color:var(--gold); line-height:1; }
+    .logo-sub { font-family:'Barlow Condensed'; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.6); margin-top:2px; }
+
+    .subtabs { display:flex; background:var(--azul); border-bottom:2px solid var(--gold); position:sticky; top:0; z-index:9; }
+    .subtab { flex:1; padding:13px 8px; border:none; background:none; font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,.6); cursor:pointer; border-bottom:3px solid transparent; transition:all .2s; }
+    .subtab.active { color:var(--gold); border-bottom-color:var(--gold); background:rgba(0,0,0,.2); }
+
+    main { position:relative; z-index:1; max-width:700px; margin:0 auto; padding:20px 16px 60px; }
+    .panel { display:none; animation:fadeIn .3s ease; }
+    .panel.active { display:block; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+
+    /* BREADCRUMB */
+    .breadcrumb { display:flex; align-items:center; gap:6px; font-family:'DM Mono'; font-size:11px; color:var(--muted); margin-bottom:16px; flex-wrap:wrap; }
+    .bc-item { cursor:pointer; color:var(--azul); text-decoration:underline dotted; }
+    .bc-item:hover { color:var(--laranja); }
+    .bc-sep { color:var(--border); }
+    .bc-atual { color:var(--muted); }
+
+    /* RANKING PADRÕES */
+    .ranking-intro { background:white; border-left:5px solid var(--vermelho); border-radius:8px; padding:12px 14px; margin-bottom:18px; font-family:'DM Mono'; font-size:11px; color:var(--muted); line-height:1.6; }
+    .ranking-intro strong { color:var(--text); }
+    .pcard { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:12px; cursor:pointer; transition:all .2s; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+    .pcard:hover { border-color:var(--azul); box-shadow:0 3px 12px rgba(0,63,107,.12); transform:translateY(-1px); }
+    .pcard-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+    .pcard-icone { font-size:24px; flex-shrink:0; }
+    .pcard-info { flex:1; }
+    .pcard-titulo { font-family:'Syne'; font-weight:700; font-size:13px; color:var(--text); margin-bottom:2px; }
+    .pcard-sub { font-family:'DM Mono'; font-size:10px; color:var(--muted); }
+    .pcard-badge { font-family:'Bebas Neue'; font-size:11px; letter-spacing:1px; padding:3px 8px; border-radius:4px; white-space:nowrap; flex-shrink:0; }
+    .pcard-badge.alto { background:#fee2e2; color:var(--vermelho); }
+    .pcard-badge.medio { background:#fef3c7; color:var(--laranja); }
+    .pcard-seta { font-size:18px; color:var(--azul); flex-shrink:0; }
+    .barra-wrap { margin-bottom:4px; }
+    .barra-labels { display:flex; justify-content:space-between; font-family:'DM Mono'; font-size:10px; color:var(--muted); margin-bottom:4px; }
+    .barra { height:10px; background:var(--border); border-radius:5px; overflow:hidden; }
+    .barra-fill { height:100%; border-radius:5px; transition:width 1.2s ease; }
+    .barra-fill.alto { background:var(--vermelho); }
+    .barra-fill.medio { background:var(--laranja); }
+    .pcard-count { font-family:'DM Mono'; font-size:10px; color:var(--muted); margin-top:8px; }
+
+    /* LISTA VEREADORES */
+    .nivel-titulo { font-family:'Syne'; font-weight:700; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--azul); margin-bottom:10px; padding-bottom:6px; border-bottom:2px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+    .nivel-titulo span { font-family:'DM Mono'; font-size:10px; color:var(--muted); font-weight:400; letter-spacing:0; text-transform:none; }
+    .ver-item { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:13px 14px; margin-bottom:8px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; }
+    .ver-item:hover { border-color:var(--azul); background:#f0f4ff; }
+    .ver-pos { font-family:'Bebas Neue'; font-size:22px; color:var(--muted); width:26px; text-align:center; flex-shrink:0; }
+    .ver-pos.p1 { color:var(--vermelho); }
+    .ver-pos.p2 { color:var(--laranja); }
+    .ver-risco-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+    .ver-risco-dot.alto { background:var(--vermelho); }
+    .ver-risco-dot.medio { background:var(--laranja); }
+    .ver-risco-dot.baixo { background:var(--verde); }
+    .ver-dados { flex:1; min-width:0; }
+    .ver-nome { font-family:'Syne'; font-weight:700; font-size:13px; color:var(--text); margin-bottom:2px; }
+    .ver-meta { font-family:'DM Mono'; font-size:10px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .ver-valor { font-family:'Bebas Neue'; font-size:16px; color:var(--roxo); text-align:right; flex-shrink:0; }
+
+    /* PERFIL */
+    .perfil-card { background:var(--bg2); border:1px solid var(--border); border-top:4px solid var(--azul); border-radius:10px; padding:18px; margin-bottom:18px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+    .perfil-nome { font-family:'Bebas Neue'; font-size:26px; letter-spacing:3px; color:var(--azul); line-height:1; margin-bottom:4px; }
+    .perfil-meta { font-family:'DM Mono'; font-size:11px; color:var(--muted); margin-bottom:14px; line-height:1.7; }
+    .perfil-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+    .pstat { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px; text-align:center; }
+    .pstat-val { font-family:'Bebas Neue'; font-size:22px; color:var(--azul); line-height:1; }
+    .pstat-label { font-family:'Barlow Condensed'; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-top:2px; }
+    .alerta-perfil { background:#fff5f5; border:1px solid #fca5a5; border-left:4px solid var(--vermelho); border-radius:0 8px 8px 0; padding:12px 14px; margin-top:12px; font-family:'DM Mono'; font-size:11px; color:#7c1a1a; line-height:1.7; }
+    .alerta-perfil strong { color:var(--vermelho); }
+    .risco-badge { display:inline-block; font-family:'Bebas Neue'; font-size:12px; letter-spacing:2px; padding:4px 10px; border-radius:4px; }
+    .risco-badge.alto { background:#fee2e2; color:var(--vermelho); }
+    .risco-badge.medio { background:#fef3c7; color:var(--laranja); }
+    .risco-badge.baixo { background:#dcfce7; color:var(--verde); }
+    .secao-label { font-family:'Syne'; font-weight:700; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--azul); margin:18px 0 10px; padding-bottom:6px; border-bottom:2px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .badge-count { font-family:'DM Mono'; font-size:10px; background:#eef4fb; border:1px solid #b3d4f5; color:var(--azul); padding:2px 8px; border-radius:10px; }
+    .padrao-destaque-box { background:#fff5f5; border:1px solid #fca5a5; border-left:4px solid var(--vermelho); border-radius:0 8px 8px 0; padding:12px 14px; margin-bottom:16px; font-family:'DM Mono'; font-size:11px; color:#7c1a1a; line-height:1.7; }
+    .emenda-item { background:var(--bg2); border:1px solid var(--border); border-left:4px solid var(--roxo); border-radius:0 8px 8px 0; padding:14px; margin-bottom:10px; animation:fadeIn .3s ease; }
+    .emenda-item.suspeita { border-left-color:var(--vermelho); background:#fff8f8; }
+    .emenda-item.repetida { border-left-color:var(--laranja); background:#fffbf5; }
+    .ei-header { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
+    .ei-ano { font-family:'DM Mono'; font-size:10px; color:var(--muted); }
+    .ei-valor { font-family:'Bebas Neue'; font-size:20px; color:var(--roxo); line-height:1; }
+    .emenda-item.suspeita .ei-valor { color:var(--vermelho); }
+    .emenda-item.repetida .ei-valor { color:var(--laranja); }
+    .ei-destino { font-family:'Barlow'; font-size:13px; font-weight:600; color:var(--text); margin-bottom:3px; }
+    .ei-cnpj { font-family:'DM Mono'; font-size:10px; color:var(--muted); margin-bottom:4px; }
+    .ei-objeto { font-family:'DM Mono'; font-size:11px; color:var(--muted); line-height:1.5; }
+    .ei-flag { display:inline-flex; align-items:center; gap:4px; font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1px; text-transform:uppercase; padding:3px 8px; border-radius:4px; margin-top:8px; font-weight:700; }
+    .ei-flag.suspeita { background:#fee2e2; color:var(--vermelho); }
+    .ei-flag.repetida { background:#fef3c7; color:var(--laranja); }
+    .ei-flag.ok { background:#dcfce7; color:var(--verde); }
+
+    /* BUSCA */
+    .busca-titulo { font-family:'Syne'; font-weight:700; font-size:13px; letter-spacing:2px; text-transform:uppercase; color:var(--azul); margin-bottom:10px; padding-bottom:8px; border-bottom:2px solid var(--gold); }
+    .busca-row { display:flex; gap:8px; margin-bottom:14px; }
+    .busca-input { flex:1; background:var(--bg2); border:2px solid var(--border); color:var(--text); font-family:'Barlow'; font-size:14px; padding:10px 14px; outline:none; border-radius:8px; transition:border-color .2s; }
+    .busca-input:focus { border-color:var(--azul); }
+    .busca-input::placeholder { color:var(--muted); }
+    .busca-btn { background:var(--azul); border:none; color:white; font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:2px; padding:10px 18px; cursor:pointer; border-radius:8px; text-transform:uppercase; transition:background .2s; white-space:nowrap; }
+    .busca-btn:hover { background:#1a4f80; }
+    .chips-lista { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:6px; }
+    .chip { font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; padding:5px 12px; border:2px solid var(--border); color:var(--muted); cursor:pointer; border-radius:20px; background:var(--bg2); transition:all .2s; }
+    .chip:hover { background:var(--azul); border-color:var(--azul); color:white; }
+    .chips-label { font-family:'Barlow Condensed'; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+
+    /* EMPTY / LOADING */
+    .empty { text-align:center; padding:40px 20px; color:var(--muted); }
+    .empty-icon { font-size:32px; margin-bottom:10px; }
+    .empty p { font-family:'Barlow Condensed'; font-size:12px; letter-spacing:1px; text-transform:uppercase; }
+    .loading { display:flex; align-items:center; gap:10px; font-family:'DM Mono'; font-size:12px; color:var(--muted); padding:20px 0; }
+    .spinner { width:16px; height:16px; border:2px solid var(--border); border-top-color:var(--azul); border-radius:50%; animation:spin .8s linear infinite; flex-shrink:0; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    footer { position:relative; z-index:1; border-top:1px solid var(--border); padding:12px 18px; background:var(--bg2); font-family:'Barlow Condensed'; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">Zelador Cívico</div>
+    <div class="logo-sub">Radar de Vereadores · São Paulo</div>
+  </div>
+</header>
+
+<div class="subtabs">
+  <button class="subtab active" onclick="switchTab('suspeitos',this)">⚠ Padrões Suspeitos</button>
+  <button class="subtab" onclick="switchTab('consulta',this)">🔍 Consulta Direta</button>
+</div>
+
+<main>
+
+  <!-- ═══ PAINEL: PADRÕES SUSPEITOS ═══ -->
+  <div id="panel-suspeitos" class="panel active">
+
+    <!-- NÍVEL 1: ranking de padrões em barras -->
+    <div id="nivel-padroes">
+      <div class="ranking-intro">
+        <strong>Ranking de irregularidades</strong> — ordenado por incidência no plenário. Toque em um tipo para ver os vereadores envolvidos.
+      </div>
+      <div id="lista-padroes"></div>
+    </div>
+
+    <!-- NÍVEL 2: vereadores do padrão selecionado -->
+    <div id="nivel-vereadores" style="display:none">
+      <button onclick="voltarPadroes()" style="display:flex;align-items:center;gap:6px;background:none;border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-family:'Barlow Condensed';font-size:12px;font-weight:700;letter-spacing:1px;color:var(--azul);cursor:pointer;margin-bottom:14px;text-transform:uppercase;">← Voltar aos Padrões</button>
+      <div class="breadcrumb">
+        <span class="bc-item" onclick="voltarPadroes()">⚠ Padrões</span>
+        <span class="bc-sep">›</span>
+        <span class="bc-atual" id="bc-padrao"></span>
+      </div>
+      <div class="nivel-titulo">
+        Vereadores envolvidos
+        <span id="sub-ver-lista"></span>
+      </div>
+      <div id="lista-ver-padrao"></div>
+    </div>
+
+    <!-- NÍVEL 3: perfil detalhado -->
+    <div id="nivel-perfil" style="display:none">
+      <button onclick="voltarVereadores()" style="display:flex;align-items:center;gap:6px;background:none;border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-family:'Barlow Condensed';font-size:12px;font-weight:700;letter-spacing:1px;color:var(--azul);cursor:pointer;margin-bottom:14px;text-transform:uppercase;">← Voltar à Lista</button>
+      <div class="breadcrumb">
+        <span class="bc-item" onclick="voltarPadroes()">⚠ Padrões</span>
+        <span class="bc-sep">›</span>
+        <span class="bc-item" id="bc-padrao2" onclick="voltarVereadores()"></span>
+        <span class="bc-sep">›</span>
+        <span class="bc-atual" id="bc-ver-nome"></span>
+      </div>
+      <div id="conteudo-perfil"></div>
+    </div>
+
+  </div>
+
+  <!-- ═══ PAINEL: CONSULTA DIRETA ═══ -->
+  <div id="panel-consulta" class="panel">
+    <div style="margin-bottom:20px">
+      <div class="busca-titulo">Buscar Vereador ou Gabinete</div>
+      <div class="busca-row">
+        <input class="busca-input" id="busca-input" type="text" placeholder="Nome do vereador…"/>
+        <button class="busca-btn" onclick="buscarVereador()">BUSCAR</button>
+      </div>
+      <div class="chips-label">Sugestões rápidas</div>
+      <div class="chips-lista" id="chips-lista"></div>
+    </div>
+    <div id="resultado-consulta">
+      <div class="empty"><div class="empty-icon">🏛</div><p>Digite o nome para ver o histórico</p></div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span>Dados educacionais · Zelador Cívico · SP</span>
+  <span>Fontes: Portal Transparência SP · Câmara Municipal SP</span>
+</footer>
+
+<script>
+const VEREADORES = [
+  { nome:'Carlos Bezerra Jr.', partido:'PT', gabinete:14, mandatos:'2017–2024', totalEmendas:5, totalValor:1240000, risco:'medio',
+    alertas:['Destinação repetida à mesma entidade (3 anos consecutivos)','Uma emenda sem CNPJ registrado'],
+    emendas:[
+      { ano:2024, valor:320000, destino:'Assoc. Comunitária Jardim Ângela', cnpj:'12.345.678/0001-90', objeto:'Reforma da sede e equipamentos', flag:'repetida' },
+      { ano:2023, valor:250000, destino:'Assoc. Comunitária Jardim Ângela', cnpj:'12.345.678/0001-90', objeto:'Atividades culturais e esportivas', flag:'repetida' },
+      { ano:2022, valor:210000, destino:'Assoc. Comunitária Jardim Ângela', cnpj:'12.345.678/0001-90', objeto:'Manutenção de infraestrutura', flag:'repetida' },
+      { ano:2023, valor:280000, destino:'Instituto Periferia Ativa', cnpj:null, objeto:'Capacitação profissional', flag:'suspeita' },
+      { ano:2022, valor:180000, destino:'EMEF Prof. Waldomiro Palmério', cnpj:null, objeto:'Equipamentos de informática', flag:'ok' },
+    ]
+  },
+  { nome:'Silvia Ferraro', partido:'PSOL', gabinete:31, mandatos:'2021–2024', totalEmendas:4, totalValor:890000, risco:'baixo',
+    alertas:[],
+    emendas:[
+      { ano:2024, valor:300000, destino:'Subprefeitura Pinheiros', cnpj:null, objeto:'Pavimentação de ciclovias', flag:'ok' },
+      { ano:2023, valor:200000, destino:'ONG Casa Florescer', cnpj:'98.765.432/0001-10', objeto:'Apoio a mulheres em situação de violência', flag:'ok' },
+      { ano:2023, valor:190000, destino:'EMEI Jardim Panorama', cnpj:null, objeto:'Reforma de banheiros', flag:'ok' },
+      { ano:2022, valor:200000, destino:'UBS Vila Madalena', cnpj:null, objeto:'Equipamentos médicos', flag:'ok' },
+    ]
+  },
+  { nome:'Rubinho Nunes', partido:'União', gabinete:42, mandatos:'2017–2024', totalEmendas:6, totalValor:2180000, risco:'alto',
+    alertas:[
+      'Alto volume total de emendas (R$ 2,18M — 2,3× a média)',
+      'Beneficiária recorrente (Santa Casa) em 3 anos consecutivos',
+      'Contrato emergencial vinculado ao mesmo exercício das emendas',
+      'Emenda destinada a entidade com CNPJ inativo'
+    ],
+    emendas:[
+      { ano:2024, valor:500000, destino:'Santa Casa — Unidade Sul', cnpj:'57.571.275/0001-00', objeto:'Equipamentos UTI', flag:'repetida' },
+      { ano:2023, valor:480000, destino:'Santa Casa — Unidade Sul', cnpj:'57.571.275/0001-00', objeto:'Reforma do bloco cirúrgico', flag:'repetida' },
+      { ano:2022, valor:400000, destino:'Santa Casa — Unidade Sul', cnpj:'57.571.275/0001-00', objeto:'Diagnóstico por imagem', flag:'repetida' },
+      { ano:2024, valor:350000, destino:'Instituto Saúde Integral SP', cnpj:'11.222.333/0001-44', objeto:'Custeio de cirurgias eletivas', flag:'suspeita' },
+      { ano:2023, valor:250000, destino:'Associação Bem Viver SP', cnpj:'00.111.222/0001-55', objeto:'Assistência social a idosos', flag:'ok' },
+      { ano:2022, valor:200000, destino:'Clínica Popular da Zona Sul', cnpj:null, objeto:'Equipamentos odontológicos — CNPJ não localizado', flag:'suspeita' },
+    ]
+  },
+  { nome:'Janaína Pascal', partido:'PL', gabinete:7, mandatos:'2021–2024', totalEmendas:3, totalValor:780000, risco:'baixo',
+    alertas:[],
+    emendas:[
+      { ano:2024, valor:320000, destino:'Subpref. M\'Boi Mirim — Obras', cnpj:null, objeto:'Pavimentação no Jardim Silveira', flag:'ok' },
+      { ano:2023, valor:260000, destino:'EMEF Jardim Ângela II', cnpj:null, objeto:'Reforma da quadra poliesportiva', flag:'ok' },
+      { ano:2022, valor:200000, destino:'UBS Jardim Ângela', cnpj:null, objeto:'Equipamentos médicos e reforma', flag:'ok' },
+    ]
+  },
+  { nome:'Sonaira Fernandes', partido:'Republicanos', gabinete:19, mandatos:'2017–2024', totalEmendas:5, totalValor:1050000, risco:'medio',
+    alertas:['Duas emendas ao mesmo instituto em anos consecutivos','Um destinatário sem CNPJ ativo'],
+    emendas:[
+      { ano:2024, valor:280000, destino:'Instituto Cidadania e Esporte da Periferia', cnpj:'34.567.890/0001-11', objeto:'Atividades esportivas jovens', flag:'repetida' },
+      { ano:2023, valor:150000, destino:'Instituto Cidadania e Esporte da Periferia', cnpj:'34.567.890/0001-11', objeto:'Reformas na sede', flag:'repetida' },
+      { ano:2024, valor:200000, destino:'Projeto Mãos Dadas SP', cnpj:null, objeto:'Inclusão produtiva mulheres', flag:'suspeita' },
+      { ano:2023, valor:220000, destino:'Subprefeitura Jabaquara', cnpj:null, objeto:'Manutenção de praças', flag:'ok' },
+      { ano:2022, valor:200000, destino:'EMEI Jardim Umarizal', cnpj:null, objeto:'Reforma do refeitório escolar', flag:'ok' },
+    ]
+  },
+];
+
+const PADROES = [
+  { id:'repetida', icone:'🔁', nivel:'alto', pct:85,
+    titulo:'Destinação repetida à mesma entidade',
+    sub:'Mesma entidade beneficiada por 2 ou mais anos consecutivos sem processo seletivo',
+    fundamentacao:'A destinação repetida sem processo seletivo pode indicar dependência política ou favorecimento. O TCM-SP monitora concentrações acima de 2 exercícios consecutivos.',
+    envolvidos:[
+      { nome:'Rubinho Nunes',      valor:1380000, detalhe:'Santa Casa · 3 anos · R$ 1,38M' },
+      { nome:'Carlos Bezerra Jr.', valor:780000,  detalhe:'Assoc. Jardim Ângela · 3 anos · R$ 780K' },
+      { nome:'Sonaira Fernandes',  valor:430000,  detalhe:'Instituto Cidadania e Esporte · 2 anos · R$ 430K' },
+    ]
+  },
+  { id:'sem-cnpj', icone:'🚫', nivel:'alto', pct:78,
+    titulo:'Beneficiário sem CNPJ ativo',
+    sub:'Emendas a entidades sem cadastro ativo na Receita Federal',
+    fundamentacao:'A Lei de Responsabilidade Fiscal exige regularidade fiscal do beneficiário no momento do repasse. Destinação sem CNPJ ativo configura irregularidade grave.',
+    envolvidos:[
+      { nome:'Rubinho Nunes',      valor:200000, detalhe:'Clínica Popular Zona Sul · CNPJ não localizado' },
+      { nome:'Carlos Bezerra Jr.', valor:280000, detalhe:'Instituto Periferia Ativa · CNPJ ausente' },
+      { nome:'Sonaira Fernandes',  valor:200000, detalhe:'Projeto Mãos Dadas SP · CNPJ inativo' },
+    ]
+  },
+  { id:'volume', icone:'💰', nivel:'medio', pct:60,
+    titulo:'Volume acima da média do plenário',
+    sub:'Emendas totais 1,3× ou mais acima da média dos vereadores',
+    fundamentacao:'A média por vereador no período 2022–2024 foi R$ 940K. Volume acima não é ilegal, mas exige atenção quanto à execução e prestação de contas.',
+    envolvidos:[
+      { nome:'Rubinho Nunes',      valor:2180000, detalhe:'R$ 2,18M — 2,3× a média' },
+      { nome:'Carlos Bezerra Jr.', valor:1240000, detalhe:'R$ 1,24M — 1,3× a média' },
+    ]
+  },
+  { id:'emergencia', icone:'⚡', nivel:'medio', pct:55,
+    titulo:'Coincidência com dispensa emergencial',
+    sub:'Emendas aprovadas no mesmo ciclo orçamentário de contratos emergenciais',
+    fundamentacao:'Coincidência temporal entre emendas e dispensas emergenciais pode indicar criação artificial de urgência para favorecer contratados ligados ao mandato.',
+    envolvidos:[
+      { nome:'Rubinho Nunes', valor:480000, detalhe:'2023 — emenda Santa Casa + dispensa SMSUB-031' },
+    ]
+  },
+];
+
+PADROES.sort((a,b) => b.pct - a.pct);
+
+let padraoAtivo = null;
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+function init() {
+  renderPadroes();
+
+  const chips = document.getElementById('chips-lista');
+  VEREADORES.forEach(v => {
+    const b = document.createElement('button');
+    b.className = 'chip'; b.textContent = v.nome;
+    b.onclick = () => { document.getElementById('busca-input').value = v.nome; buscarVereador(); };
+    chips.appendChild(b);
+  });
+
+  document.getElementById('busca-input').addEventListener('keydown', e => { if(e.key==='Enter') buscarVereador(); });
+}
+
+// ── NÍVEL 1: RANKING ──────────────────────────────────────────────────────
+function renderPadroes() {
+  document.getElementById('lista-padroes').innerHTML = PADROES.map(p => `
+    <div class="pcard" onclick="selecionarPadrao('${p.id}')">
+      <div class="pcard-header">
+        <div class="pcard-icone">${p.icone}</div>
+        <div class="pcard-info">
+          <div class="pcard-titulo">${p.titulo}</div>
+          <div class="pcard-sub">${p.sub}</div>
+        </div>
+        <div class="pcard-badge ${p.nivel}">${p.nivel==='alto'?'🔴 ALTO':'🟡 MÉDIO'}</div>
+        <div class="pcard-seta">›</div>
+      </div>
+      <div class="barra-wrap">
+        <div class="barra-labels"><span>Incidência no plenário</span><span>${p.pct}%</span></div>
+        <div class="barra"><div class="barra-fill ${p.nivel}" style="width:0" data-w="${p.pct}%"></div></div>
+      </div>
+      <div class="pcard-count">${p.envolvidos.length} vereador${p.envolvidos.length>1?'es':''} identificado${p.envolvidos.length>1?'s':''} · toque para ver</div>
+    </div>
+  `).join('');
+
+  setTimeout(() => {
+    document.querySelectorAll('.barra-fill[data-w]').forEach(el => { el.style.width = el.dataset.w; });
+  }, 80);
+}
+
+// ── NÍVEL 2: VEREADORES DO PADRÃO ────────────────────────────────────────
+function selecionarPadrao(id) {
+  padraoAtivo = PADROES.find(p => p.id === id);
+  if (!padraoAtivo) return;
+
+  document.getElementById('nivel-padroes').style.display = 'none';
+  document.getElementById('nivel-perfil').style.display = 'none';
+  document.getElementById('nivel-vereadores').style.display = 'block';
+
+  document.getElementById('bc-padrao').textContent = padraoAtivo.titulo;
+  document.getElementById('sub-ver-lista').textContent = `${padraoAtivo.envolvidos.length} registro${padraoAtivo.envolvidos.length>1?'s':''} · ordem decrescente de valor`;
+
+  const ordenados = [...padraoAtivo.envolvidos].sort((a,b) => b.valor - a.valor);
+  const posClass = ['p1','p2'];
+
+  document.getElementById('lista-ver-padrao').innerHTML = ordenados.map((e,i) => {
+    const v = VEREADORES.find(x => x.nome === e.nome);
+    return `
+      <div class="ver-item" onclick="verPerfil('${e.nome}')">
+        <div class="ver-pos ${posClass[i]||''}">${i+1}</div>
+        <div class="ver-risco-dot ${v?v.risco:'medio'}"></div>
+        <div class="ver-dados">
+          <div class="ver-nome">${e.nome}</div>
+          <div class="ver-meta">${v?v.partido+' · Gab. '+v.gabinete+' · ':''} ${e.detalhe}</div>
+        </div>
+        <div class="ver-valor">R$${(e.valor/1000).toFixed(0)}K</div>
+      </div>`;
+  }).join('');
+}
+
+// ── NÍVEL 3: PERFIL ───────────────────────────────────────────────────────
+function verPerfil(nomeVer) {
+  const v = VEREADORES.find(x => x.nome === nomeVer);
+  if (!v) return;
+
+  document.getElementById('nivel-vereadores').style.display = 'none';
+  document.getElementById('nivel-perfil').style.display = 'block';
+
+  if (padraoAtivo) {
+    document.getElementById('bc-padrao2').textContent = padraoAtivo.titulo;
+  }
+  document.getElementById('bc-ver-nome').textContent = v.nome;
+
+  const flagLabels = { suspeita:'⚠ Atenção', repetida:'🔁 Repetida', ok:'✓ Regular' };
+  const riscoLabel = { alto:'🔴 RISCO ALTO', medio:'🟡 ATENÇÃO', baixo:'🟢 REGULAR' };
+  const totalAlerta = v.emendas.filter(e => e.flag !== 'ok').length;
+
+  document.getElementById('conteudo-perfil').innerHTML = `
+    ${padraoAtivo ? `
+    <div class="padrao-destaque-box">
+      <strong>${padraoAtivo.icone} ${padraoAtivo.titulo}</strong><br>
+      ${padraoAtivo.fundamentacao}
+    </div>` : ''}
+    <div class="perfil-card">
+      <div class="perfil-nome">${v.nome}</div>
+      <div class="perfil-meta">
+        ${v.partido} · Gabinete ${v.gabinete} · Mandatos: ${v.mandatos}<br>
+        <span class="risco-badge ${v.risco}" style="margin-top:6px;display:inline-block">${riscoLabel[v.risco]}</span>
+      </div>
+      <div class="perfil-stats">
+        <div class="pstat"><div class="pstat-val">${v.totalEmendas}</div><div class="pstat-label">Emendas</div></div>
+        <div class="pstat"><div class="pstat-val" style="font-size:16px">R$${(v.totalValor/1e6).toFixed(2)}M</div><div class="pstat-label">Total</div></div>
+        <div class="pstat"><div class="pstat-val" style="color:${totalAlerta>0?'var(--vermelho)':'var(--verde)'}">${totalAlerta}</div><div class="pstat-label">Alertas</div></div>
+      </div>
+      ${v.alertas.length
+        ? `<div class="alerta-perfil"><strong>Pontos de atenção:</strong><br>${v.alertas.map(a=>`• ${a}`).join('<br>')}</div>`
+        : `<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px 12px;font-family:'DM Mono';font-size:11px;color:var(--verde)">✓ Nenhum padrão suspeito identificado.</div>`}
+    </div>
+    <div class="secao-label">Histórico de Emendas <span class="badge-count">${v.emendas.length} registros</span></div>
+    ${v.emendas.map(e => `
+      <div class="emenda-item ${e.flag!=='ok'?e.flag:''}">
+        <div class="ei-header">
+          <div class="ei-valor">R$ ${e.valor.toLocaleString('pt-BR')}</div>
+          <div class="ei-ano">${e.ano}</div>
+        </div>
+        <div class="ei-destino">${e.destino}</div>
+        <div class="ei-cnpj">${e.cnpj?'CNPJ: '+e.cnpj:'⚠ Sem CNPJ registrado'}</div>
+        <div class="ei-objeto">${e.objeto}</div>
+        <span class="ei-flag ${e.flag}">${flagLabels[e.flag]}</span>
+      </div>`).join('')}
+  `;
+}
+
+// ── NAVEGAÇÃO ─────────────────────────────────────────────────────────────
+function voltarPadroes() {
+  padraoAtivo = null;
+  document.getElementById('nivel-vereadores').style.display = 'none';
+  document.getElementById('nivel-perfil').style.display = 'none';
+  document.getElementById('nivel-padroes').style.display = 'block';
+}
+
+function voltarVereadores() {
+  document.getElementById('nivel-perfil').style.display = 'none';
+  document.getElementById('nivel-vereadores').style.display = 'block';
+}
+
+// ── CONSULTA DIRETA ───────────────────────────────────────────────────────
+async function buscarVereador() {
+  const q = document.getElementById('busca-input').value.trim().toLowerCase();
+  const container = document.getElementById('resultado-consulta');
+  if (!q) return;
+
+  container.innerHTML = `<div class="loading"><div class="spinner"></div> Consultando dados do mandato…</div>`;
+  await new Promise(r => setTimeout(r, 700));
+
+  const v = VEREADORES.find(x => x.nome.toLowerCase().includes(q));
+  if (!v) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><p>Vereador não encontrado</p></div>`;
+    return;
+  }
+
+  // reutiliza renderização do nível 3 mas direto no container
+  const flagLabels = { suspeita:'⚠ Atenção', repetida:'🔁 Repetida', ok:'✓ Regular' };
+  const riscoLabel = { alto:'🔴 RISCO ALTO', medio:'🟡 ATENÇÃO', baixo:'🟢 REGULAR' };
+  const totalAlerta = v.emendas.filter(e => e.flag !== 'ok').length;
+
+  container.innerHTML = `
+    <div class="perfil-card">
+      <div class="perfil-nome">${v.nome}</div>
+      <div class="perfil-meta">
+        ${v.partido} · Gabinete ${v.gabinete} · Mandatos: ${v.mandatos}<br>
+        <span class="risco-badge ${v.risco}" style="margin-top:6px;display:inline-block">${riscoLabel[v.risco]}</span>
+      </div>
+      <div class="perfil-stats">
+        <div class="pstat"><div class="pstat-val">${v.totalEmendas}</div><div class="pstat-label">Emendas</div></div>
+        <div class="pstat"><div class="pstat-val" style="font-size:16px">R$${(v.totalValor/1e6).toFixed(2)}M</div><div class="pstat-label">Total</div></div>
+        <div class="pstat"><div class="pstat-val" style="color:${totalAlerta>0?'var(--vermelho)':'var(--verde)'}">${totalAlerta}</div><div class="pstat-label">Alertas</div></div>
+      </div>
+      ${v.alertas.length
+        ? `<div class="alerta-perfil"><strong>Pontos de atenção:</strong><br>${v.alertas.map(a=>`• ${a}`).join('<br>')}</div>`
+        : `<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px 12px;font-family:'DM Mono';font-size:11px;color:var(--verde)">✓ Nenhum padrão suspeito identificado.</div>`}
+    </div>
+    <div class="secao-label">Histórico de Emendas <span class="badge-count">${v.emendas.length} registros</span></div>
+    ${v.emendas.map(e => `
+      <div class="emenda-item ${e.flag!=='ok'?e.flag:''}">
+        <div class="ei-header">
+          <div class="ei-valor">R$ ${e.valor.toLocaleString('pt-BR')}</div>
+          <div class="ei-ano">${e.ano}</div>
+        </div>
+        <div class="ei-destino">${e.destino}</div>
+        <div class="ei-cnpj">${e.cnpj?'CNPJ: '+e.cnpj:'⚠ Sem CNPJ registrado'}</div>
+        <div class="ei-objeto">${e.objeto}</div>
+        <span class="ei-flag ${e.flag}">${flagLabels[e.flag]}</span>
+      </div>`).join('')}
+  `;
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.subtab').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+init();
+</script>
+</body>
+</html>

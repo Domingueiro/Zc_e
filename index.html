@@ -39,7 +39,9 @@
         .tabs::-webkit-scrollbar { display: none; }
         .tab-btn { flex-shrink: 0; padding: 14px 16px; border: none; background: none; font-family: 'Syne'; font-weight: 700; color: #ffffff; cursor: pointer; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; white-space: nowrap; }
         .tab-btn.active { color: var(--ouro); border-bottom: 3px solid var(--ouro); background: #1a1a1a; }
-        .tab-content { display: none; padding: 20px; animation: fadeIn 0.4s ease; }
+        /* SWIPE CONTAINER */
+        #swipe-container { overflow: hidden; position: relative; }
+        .tab-content { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -252,6 +254,8 @@
         <button class="tab-btn" id="tab-btn-ranking" onclick="mudarAba('ranking', this)">RANKING</button>
     </div>
 
+    <div id="swipe-container">
+
     <div id="tab-radar" class="tab-content active">
         <div id="map"></div>
         <div class="info-box">
@@ -406,8 +410,9 @@
             <div class="ranking-insight-texto" id="ranking-insight-texto"></div>
         </div>
 
-    </div>
-</div>
+    </div><!-- fim tab-ranking -->
+</div><!-- fim swipe-container -->
+</div><!-- fim sistema-auditoria -->
 
 <!-- MODAL SÍNTESE TÉCNICA + AÇÕES -->
 <div class="modal-sintese-overlay" id="modal-sintese" onclick="fecharSintese(event)">
@@ -913,10 +918,67 @@
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById('tab-' + id).classList.add('active');
+        // Rola a barra de tabs para mostrar o botão ativo
+        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         if (id === 'radar' && mapa) setTimeout(() => { mapa.invalidateSize(); }, 300);
         if (id === 'licitacoes') enviarCepAoIframe();
         if (id === 'ranking') inicializarRanking();
     }
+
+    // ── SWIPE ENTRE ABAS ─────────────────────────────────────────────────
+    const ORDEM_ABAS = ['radar','alertas','emendas','vereadores','investimento','licitacoes','ranking'];
+
+    function abaAtiva() {
+        const el = document.querySelector('.tab-content.active');
+        return el ? el.id.replace('tab-', '') : 'radar';
+    }
+
+    function irParaAba(id) {
+        const btn = document.getElementById('tab-btn-' + id);
+        if (btn) mudarAba(id, btn);
+    }
+
+    (function initSwipe() {
+        const container = document.getElementById('swipe-container');
+        if (!container) return;
+
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let swipeAtivo = false;
+
+        container.addEventListener('touchstart', e => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            swipeAtivo = true;
+        }, { passive: true });
+
+        container.addEventListener('touchmove', e => {
+            if (!swipeAtivo) return;
+            const dx = e.touches[0].clientX - touchStartX;
+            const dy = e.touches[0].clientY - touchStartY;
+            // Cancela se movimento for mais vertical que horizontal
+            if (Math.abs(dy) > Math.abs(dx)) { swipeAtivo = false; }
+        }, { passive: true });
+
+        container.addEventListener('touchend', e => {
+            if (!swipeAtivo) return;
+            swipeAtivo = false;
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            const dy = e.changedTouches[0].clientY - touchStartY;
+            // Só dispara se horizontal dominante e deslocamento mínimo de 50px
+            if (Math.abs(dx) < 50 || Math.abs(dy) > Math.abs(dx)) return;
+
+            const atual = abaAtiva();
+            const idx = ORDEM_ABAS.indexOf(atual);
+            if (dx < 0 && idx < ORDEM_ABAS.length - 1) {
+                // Deslize para esquerda → próxima aba
+                irParaAba(ORDEM_ABAS[idx + 1]);
+            } else if (dx > 0 && idx > 0) {
+                // Deslize para direita → aba anterior
+                irParaAba(ORDEM_ABAS[idx - 1]);
+            }
+        }, { passive: true });
+    })();
 
     function enviarCepAoIframe() {
         const iframe = document.getElementById('iframe-licitacoes');

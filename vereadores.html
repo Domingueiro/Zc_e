@@ -275,57 +275,57 @@
 
 <script>
 const VEREADORES = [
-  { nome:'Carlos Bezerra Jr.', partido:'PT', gabinete:14, mandatos:'2017–2024', totalEmendas:5, totalValor:1240000, risco:'medio',
+  { nome:'Laércio Marvão Neto', partido:'PTB', gabinete:14, mandatos:'2017–2024', totalEmendas:5, totalValor:1240000, risco:'medio',
     alertas:['Destinação repetida à mesma entidade (3 anos consecutivos)','Uma emenda sem CNPJ registrado'],
     emendas:[
-      { ano:2024, valor:320000, destino:'Assoc. Comunitária Jardim Ângela', cnpj:'12.345.678/0001-90', objeto:'Reforma da sede e equipamentos', flag:'repetida' },
-      { ano:2023, valor:250000, destino:'Assoc. Comunitária Jardim Ângela', cnpj:'12.345.678/0001-90', objeto:'Atividades culturais e esportivas', flag:'repetida' },
-      { ano:2022, valor:210000, destino:'Assoc. Comunitária Jardim Ângela', cnpj:'12.345.678/0001-90', objeto:'Manutenção de infraestrutura', flag:'repetida' },
-      { ano:2023, valor:280000, destino:'Instituto Periferia Ativa', cnpj:null, objeto:'Capacitação profissional', flag:'suspeita' },
-      { ano:2022, valor:180000, destino:'EMEF Prof. Waldomiro Palmério', cnpj:null, objeto:'Equipamentos de informática', flag:'ok' },
+      { ano:2024, valor:320000, destino:'Assoc. Comunit. Vila Beiral', cnpj:'12.345.678/0001-90', objeto:'Reforma da sede e equipamentos', flag:'repetida' },
+      { ano:2023, valor:250000, destino:'Assoc. Comunit. Vila Beiral', cnpj:'12.345.678/0001-90', objeto:'Atividades culturais e esportivas', flag:'repetida' },
+      { ano:2022, valor:210000, destino:'Assoc. Comunit. Vila Beiral', cnpj:'12.345.678/0001-90', objeto:'Manutenção de infraestrutura', flag:'repetida' },
+      { ano:2023, valor:280000, destino:'Instituto Referia Itava', cnpj:null, objeto:'Capacitação profissional', flag:'suspeita' },
+      { ano:2022, valor:180000, destino:'EMEF Dist. Setor Leste IV', cnpj:null, objeto:'Equipamentos de informática', flag:'ok' },
     ]
   },
-  { nome:'Silvia Ferraro', partido:'PSOL', gabinete:31, mandatos:'2021–2024', totalEmendas:4, totalValor:890000, risco:'baixo',
+  { nome:'Veruska Talmir', partido:'PSDB', gabinete:31, mandatos:'2021–2024', totalEmendas:4, totalValor:890000, risco:'baixo',
     alertas:[],
     emendas:[
-      { ano:2024, valor:300000, destino:'Subprefeitura Pinheiros', cnpj:null, objeto:'Pavimentação de ciclovias', flag:'ok' },
-      { ano:2023, valor:200000, destino:'ONG Casa Florescer', cnpj:'98.765.432/0001-10', objeto:'Apoio a mulheres em situação de violência', flag:'ok' },
-      { ano:2023, valor:190000, destino:'EMEI Jardim Panorama', cnpj:null, objeto:'Reforma de banheiros', flag:'ok' },
-      { ano:2022, valor:200000, destino:'UBS Vila Madalena', cnpj:null, objeto:'Equipamentos médicos', flag:'ok' },
+      { ano:2024, valor:300000, destino:'Subprefeitura Zona Oeste — Obras', cnpj:null, objeto:'Pavimentação de ciclovias', flag:'ok' },
+      { ano:2023, valor:200000, destino:'ONG Lar Recomeço SP', cnpj:'98.765.432/0001-10', objeto:'Apoio a mulheres em situação de violência', flag:'ok' },
+      { ano:2023, valor:190000, destino:'EMEI Dist. Jardim Norval', cnpj:null, objeto:'Reforma de banheiros', flag:'ok' },
+      { ano:2022, valor:200000, destino:'UBS Dist. Vila Centurel', cnpj:null, objeto:'Equipamentos médicos', flag:'ok' },
     ]
   },
-  { nome:'Rubinho Nunes', partido:'União', gabinete:42, mandatos:'2017–2024', totalEmendas:6, totalValor:2180000, risco:'alto',
+  { nome:'Brismar Quelino', partido:'PRD', gabinete:42, mandatos:'2017–2024', totalEmendas:6, totalValor:2180000, risco:'alto',
     alertas:[
       'Alto volume total de emendas (R$ 2,18M — 2,3× a média)',
-      'Beneficiária recorrente (Santa Casa) em 3 anos consecutivos',
+      'Beneficiária recorrente (Hosp. Caridade Zonal) em 3 anos consecutivos',
       'Contrato emergencial vinculado ao mesmo exercício das emendas',
       'Emenda destinada a entidade com CNPJ inativo'
     ],
     emendas:[
-      { ano:2024, valor:500000, destino:'Santa Casa — Unidade Sul', cnpj:'57.571.275/0001-00', objeto:'Equipamentos UTI', flag:'repetida' },
-      { ano:2023, valor:480000, destino:'Santa Casa — Unidade Sul', cnpj:'57.571.275/0001-00', objeto:'Reforma do bloco cirúrgico', flag:'repetida' },
-      { ano:2022, valor:400000, destino:'Santa Casa — Unidade Sul', cnpj:'57.571.275/0001-00', objeto:'Diagnóstico por imagem', flag:'repetida' },
-      { ano:2024, valor:350000, destino:'Instituto Saúde Integral SP', cnpj:'11.222.333/0001-44', objeto:'Custeio de cirurgias eletivas', flag:'suspeita' },
-      { ano:2023, valor:250000, destino:'Associação Bem Viver SP', cnpj:'00.111.222/0001-55', objeto:'Assistência social a idosos', flag:'ok' },
-      { ano:2022, valor:200000, destino:'Clínica Popular da Zona Sul', cnpj:null, objeto:'Equipamentos odontológicos — CNPJ não localizado', flag:'suspeita' },
+      { ano:2024, valor:500000, destino:'Hosp. Caridade Zonal — Unidade Sul', cnpj:'57.571.275/0001-00', objeto:'Equipamentos UTI', flag:'repetida' },
+      { ano:2023, valor:480000, destino:'Hosp. Caridade Zonal — Unidade Sul', cnpj:'57.571.275/0001-00', objeto:'Reforma do bloco cirúrgico', flag:'repetida' },
+      { ano:2022, valor:400000, destino:'Hosp. Caridade Zonal — Unidade Sul', cnpj:'57.571.275/0001-00', objeto:'Diagnóstico por imagem', flag:'repetida' },
+      { ano:2024, valor:350000, destino:'Instituto Saúde Plena Sudeste', cnpj:'11.222.333/0001-44', objeto:'Custeio de cirurgias eletivas', flag:'suspeita' },
+      { ano:2023, valor:250000, destino:'Assoc. Bem Estar Comunit. SP', cnpj:'00.111.222/0001-55', objeto:'Assistência social a idosos', flag:'ok' },
+      { ano:2022, valor:200000, destino:'Clínica Bairro Integrado Sul', cnpj:null, objeto:'Equipamentos odontológicos — CNPJ não localizado', flag:'suspeita' },
     ]
   },
-  { nome:'Janaína Pascal', partido:'PL', gabinete:7, mandatos:'2021–2024', totalEmendas:3, totalValor:780000, risco:'baixo',
+  { nome:'Dorcivânia Pretal', partido:'PDT', gabinete:7, mandatos:'2021–2024', totalEmendas:3, totalValor:780000, risco:'baixo',
     alertas:[],
     emendas:[
-      { ano:2024, valor:320000, destino:'Subpref. M\'Boi Mirim — Obras', cnpj:null, objeto:'Pavimentação no Jardim Silveira', flag:'ok' },
-      { ano:2023, valor:260000, destino:'EMEF Jardim Ângela II', cnpj:null, objeto:'Reforma da quadra poliesportiva', flag:'ok' },
-      { ano:2022, valor:200000, destino:'UBS Jardim Ângela', cnpj:null, objeto:'Equipamentos médicos e reforma', flag:'ok' },
+      { ano:2024, valor:320000, destino:'Subpref. Dist. Miravale — Obras', cnpj:null, objeto:'Pavimentação no Jd. Silvano', flag:'ok' },
+      { ano:2023, valor:260000, destino:'EMEF Dist. Jd. Angleva II', cnpj:null, objeto:'Reforma da quadra poliesportiva', flag:'ok' },
+      { ano:2022, valor:200000, destino:'UBS Dist. Jd. Angleva', cnpj:null, objeto:'Equipamentos médicos e reforma', flag:'ok' },
     ]
   },
-  { nome:'Sonaira Fernandes', partido:'Republicanos', gabinete:19, mandatos:'2017–2024', totalEmendas:5, totalValor:1050000, risco:'medio',
+  { nome:'Waldirene Fosmar', partido:'Avante', gabinete:19, mandatos:'2017–2024', totalEmendas:5, totalValor:1050000, risco:'medio',
     alertas:['Duas emendas ao mesmo instituto em anos consecutivos','Um destinatário sem CNPJ ativo'],
     emendas:[
-      { ano:2024, valor:280000, destino:'Instituto Cidadania e Esporte da Periferia', cnpj:'34.567.890/0001-11', objeto:'Atividades esportivas jovens', flag:'repetida' },
-      { ano:2023, valor:150000, destino:'Instituto Cidadania e Esporte da Periferia', cnpj:'34.567.890/0001-11', objeto:'Reformas na sede', flag:'repetida' },
-      { ano:2024, valor:200000, destino:'Projeto Mãos Dadas SP', cnpj:null, objeto:'Inclusão produtiva mulheres', flag:'suspeita' },
-      { ano:2023, valor:220000, destino:'Subprefeitura Jabaquara', cnpj:null, objeto:'Manutenção de praças', flag:'ok' },
-      { ano:2022, valor:200000, destino:'EMEI Jardim Umarizal', cnpj:null, objeto:'Reforma do refeitório escolar', flag:'ok' },
+      { ano:2024, valor:280000, destino:'Instituto Esporte e Cidadania Periurbana', cnpj:'34.567.890/0001-11', objeto:'Atividades esportivas jovens', flag:'repetida' },
+      { ano:2023, valor:150000, destino:'Instituto Esporte e Cidadania Periurbana', cnpj:'34.567.890/0001-11', objeto:'Reformas na sede', flag:'repetida' },
+      { ano:2024, valor:200000, destino:'Projeto Parceria Ativa SP', cnpj:null, objeto:'Inclusão produtiva mulheres', flag:'suspeita' },
+      { ano:2023, valor:220000, destino:'Subprefeitura Dist. Jabavale', cnpj:null, objeto:'Manutenção de praças', flag:'ok' },
+      { ano:2022, valor:200000, destino:'EMEI Dist. Jd. Umaral', cnpj:null, objeto:'Reforma do refeitório escolar', flag:'ok' },
     ]
   },
 ];
@@ -336,9 +336,9 @@ const PADROES = [
     sub:'Mesma entidade beneficiada por 2 ou mais anos consecutivos sem processo seletivo',
     fundamentacao:'A destinação repetida sem processo seletivo pode indicar dependência política ou favorecimento. O TCM-SP monitora concentrações acima de 2 exercícios consecutivos.',
     envolvidos:[
-      { nome:'Rubinho Nunes',      valor:1380000, detalhe:'Santa Casa · 3 anos · R$ 1,38M' },
-      { nome:'Carlos Bezerra Jr.', valor:780000,  detalhe:'Assoc. Jardim Ângela · 3 anos · R$ 780K' },
-      { nome:'Sonaira Fernandes',  valor:430000,  detalhe:'Instituto Cidadania e Esporte · 2 anos · R$ 430K' },
+      { nome:'Brismar Quelino',    valor:1380000, detalhe:'Hosp. Caridade Zonal · 3 anos · R$ 1,38M' },
+      { nome:'Laércio Marvão Neto', valor:780000, detalhe:'Assoc. Comunit. Vila Beiral · 3 anos · R$ 780K' },
+      { nome:'Waldirene Fosmar',   valor:430000,  detalhe:'Instituto Esporte e Cidadania · 2 anos · R$ 430K' },
     ]
   },
   { id:'sem-cnpj', icone:'🚫', nivel:'alto', pct:78,
@@ -346,9 +346,9 @@ const PADROES = [
     sub:'Emendas a entidades sem cadastro ativo na Receita Federal',
     fundamentacao:'A Lei de Responsabilidade Fiscal exige regularidade fiscal do beneficiário no momento do repasse. Destinação sem CNPJ ativo configura irregularidade grave.',
     envolvidos:[
-      { nome:'Rubinho Nunes',      valor:200000, detalhe:'Clínica Popular Zona Sul · CNPJ não localizado' },
-      { nome:'Carlos Bezerra Jr.', valor:280000, detalhe:'Instituto Periferia Ativa · CNPJ ausente' },
-      { nome:'Sonaira Fernandes',  valor:200000, detalhe:'Projeto Mãos Dadas SP · CNPJ inativo' },
+      { nome:'Brismar Quelino',     valor:200000, detalhe:'Clínica Bairro Integrado Sul · CNPJ não localizado' },
+      { nome:'Laércio Marvão Neto', valor:280000, detalhe:'Instituto Referia Itava · CNPJ ausente' },
+      { nome:'Waldirene Fosmar',    valor:200000, detalhe:'Projeto Parceria Ativa SP · CNPJ inativo' },
     ]
   },
   { id:'volume', icone:'💰', nivel:'medio', pct:60,
@@ -356,8 +356,8 @@ const PADROES = [
     sub:'Emendas totais 1,3× ou mais acima da média dos vereadores',
     fundamentacao:'A média por vereador no período 2022–2024 foi R$ 940K. Volume acima não é ilegal, mas exige atenção quanto à execução e prestação de contas.',
     envolvidos:[
-      { nome:'Rubinho Nunes',      valor:2180000, detalhe:'R$ 2,18M — 2,3× a média' },
-      { nome:'Carlos Bezerra Jr.', valor:1240000, detalhe:'R$ 1,24M — 1,3× a média' },
+      { nome:'Brismar Quelino',     valor:2180000, detalhe:'R$ 2,18M — 2,3× a média' },
+      { nome:'Laércio Marvão Neto', valor:1240000, detalhe:'R$ 1,24M — 1,3× a média' },
     ]
   },
   { id:'emergencia', icone:'⚡', nivel:'medio', pct:55,
@@ -365,7 +365,7 @@ const PADROES = [
     sub:'Emendas aprovadas no mesmo ciclo orçamentário de contratos emergenciais',
     fundamentacao:'Coincidência temporal entre emendas e dispensas emergenciais pode indicar criação artificial de urgência para favorecer contratados ligados ao mandato.',
     envolvidos:[
-      { nome:'Rubinho Nunes', valor:480000, detalhe:'2023 — emenda Santa Casa + dispensa SMSUB-031' },
+      { nome:'Brismar Quelino', valor:480000, detalhe:'2023 — emenda Hosp. Caridade + dispensa SMSUB-031' },
     ]
   },
 ];
